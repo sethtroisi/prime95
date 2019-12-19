@@ -10,11 +10,11 @@
 @class ConnectionController;
 
 @interface PrimeNetController : NSWindowController {
-	int	usePrimeNet;
-	NSString *userID;
-	NSString *computerName;
-	ConnectionController *connectionController;
-	int	startupInProgress;
+        int     usePrimeNet;
+        NSString *userID;
+        NSString *computerName;
+        ConnectionController *connectionController;
+        int     startupInProgress;
 }
 
 @property(readwrite, assign) int usePrimeNet;

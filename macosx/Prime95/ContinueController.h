@@ -9,9 +9,9 @@
 #import <Cocoa/Cocoa.h>
 
 @interface ContinueController : NSWindowController {
-	int	startAllWorkers;
-	int	workerNumber;
-	int	workerNumberMax;
+        int     startAllWorkers;
+        int     workerNumber;
+        int     workerNumberMax;
 }
 
 @property(readwrite, assign) int startAllWorkers;

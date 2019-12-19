@@ -9,9 +9,9 @@
 #import <Cocoa/Cocoa.h>
 
 @interface StopController : NSWindowController {
-	int	stopAllWorkers;
-	int	workerNumber;
-	int	workerNumberMax;
+        int     stopAllWorkers;
+        int     workerNumber;
+        int     workerNumberMax;
 
 }
 

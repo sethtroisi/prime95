@@ -10,9 +10,9 @@
 
 @interface TimeController : NSWindowController {
 
-	int	exponentToTime;
-	int	exponentToTimeMax;
-	int	numberOfIterations;
+        int     exponentToTime;
+        int     exponentToTimeMax;
+        int     numberOfIterations;
 }
 
 @property(readwrite, assign) int exponentToTime;

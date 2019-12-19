@@ -94,9 +94,9 @@ VOID ServiceStart (DWORD dwArgc, LPTSTR *lpszArgv)
 //    
 VOID ServiceStop()
 {
-	SetThreadPriority (GetCurrentThread (), THREAD_PRIORITY_NORMAL);
-	raiseAllWorkerThreadPriority ();
-	stop_workers_for_escape ();
+        SetThreadPriority (GetCurrentThread (), THREAD_PRIORITY_NORMAL);
+        raiseAllWorkerThreadPriority ();
+        stop_workers_for_escape ();
 }
 
 /* GetIniSettings -- Get initial settings from INI files
@@ -105,28 +105,28 @@ VOID ServiceStop()
  */
 void GetIniSettings()
 {
-	nameAndReadIniFiles (-1);
-	initCommCode ();
+        nameAndReadIniFiles (-1);
+        initCommCode ();
 
-	IniGetString (INI_FILE, "ServiceName", SZSERVICENAME,
-		      sizeof (SZSERVICENAME), "ppp");
-	if (strcmp (SZSERVICENAME, "ppp") != 0) {
-		IniWriteString (INI_FILE, "ServiceName", NULL);
-		IniWriteString (LOCALINI_FILE, "ServiceName", SZSERVICENAME);
-	} else {
-		IniGetString (LOCALINI_FILE, "ServiceName", SZSERVICENAME,
-			      sizeof (SZSERVICENAME), "NTPrimeService");
-	}
+        IniGetString (INI_FILE, "ServiceName", SZSERVICENAME,
+                      sizeof (SZSERVICENAME), "ppp");
+        if (strcmp (SZSERVICENAME, "ppp") != 0) {
+                IniWriteString (INI_FILE, "ServiceName", NULL);
+                IniWriteString (LOCALINI_FILE, "ServiceName", SZSERVICENAME);
+        } else {
+                IniGetString (LOCALINI_FILE, "ServiceName", SZSERVICENAME,
+                              sizeof (SZSERVICENAME), "NTPrimeService");
+        }
 
-	IniGetString (INI_FILE, "DisplayName", SZSERVICEDISPLAYNAME,
-		      sizeof (SZSERVICEDISPLAYNAME), "ppp");
-	if (strcmp (SZSERVICEDISPLAYNAME, "ppp") != 0) {
-		IniWriteString (INI_FILE, "DisplayName", NULL);
-		IniWriteString (LOCALINI_FILE, "DisplayName",
-				SZSERVICEDISPLAYNAME);
-	} else {
-		IniGetString (LOCALINI_FILE, "DisplayName",
-			      SZSERVICEDISPLAYNAME,
-			      sizeof (SZSERVICEDISPLAYNAME), "Prime Service");
-	}
+        IniGetString (INI_FILE, "DisplayName", SZSERVICEDISPLAYNAME,
+                      sizeof (SZSERVICEDISPLAYNAME), "ppp");
+        if (strcmp (SZSERVICEDISPLAYNAME, "ppp") != 0) {
+                IniWriteString (INI_FILE, "DisplayName", NULL);
+                IniWriteString (LOCALINI_FILE, "DisplayName",
+                                SZSERVICEDISPLAYNAME);
+        } else {
+                IniGetString (LOCALINI_FILE, "DisplayName",
+                              SZSERVICEDISPLAYNAME,
+                              sizeof (SZSERVICEDISPLAYNAME), "Prime Service");
+        }
 }

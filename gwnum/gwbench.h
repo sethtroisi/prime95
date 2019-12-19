@@ -25,10 +25,10 @@ extern "C" {
 
 /* Defines */
 
-#define GWNUMINI_FILE	"gwnum.txt"		/* Name of the INI file */
+#define GWNUMINI_FILE   "gwnum.txt"             /* Name of the INI file */
 
-#define GWNUM_FFT_IMPL_VERSION	"29.2"		/* This version number changes whenever FFT implementations change - meaning */
-						/* we need to toss benchmarking data from older gwnum versions. */
+#define GWNUM_FFT_IMPL_VERSION  "29.2"          /* This version number changes whenever FFT implementations change - meaning */
+                                                /* we need to toss benchmarking data from older gwnum versions. */
 
 /******************************************************************************
 *                                 Globals                                     *
@@ -39,27 +39,27 @@ extern "C" {
 /* for this number of cores and workers to pick best FFT implementations. */
 /* You might check these values to run throughput benchmarks for this combination */
 
-extern int BENCH_NUM_CORES;		/* Override from gwnum.txt. Use this #cores for benchmark FFT selection */
-extern int BENCH_NUM_WORKERS;		/* Override from gwnum.txt. Use this #workers for benchmark FFT selection */
+extern int BENCH_NUM_CORES;             /* Override from gwnum.txt. Use this #cores for benchmark FFT selection */
+extern int BENCH_NUM_WORKERS;           /* Override from gwnum.txt. Use this #workers for benchmark FFT selection */
 
 /******************************************************************************
 *                                 Routines                                    *
 ******************************************************************************/
 
-#define GWBENCH_ADD_VERSION		1
+#define GWBENCH_ADD_VERSION             1
 struct gwbench_add_struct {
-	int	version;		/* version number for this structure */
-	double	throughput;		/* throughput in squarings per second */
-	double	bench_length;		/* time (in seconds) the benchmark was run */
-	int	num_cores;		/* number of cores kept busy by the benchmark */
-	int	num_workers;		/* number of workers used by the benchmark */
-	int	num_hyperthreads;	/* hyperthreading */
-	int	error_checking;		/* benchmark was run with error checking enabled */
+        int     version;                /* version number for this structure */
+        double  throughput;             /* throughput in squarings per second */
+        double  bench_length;           /* time (in seconds) the benchmark was run */
+        int     num_cores;              /* number of cores kept busy by the benchmark */
+        int     num_workers;            /* number of workers used by the benchmark */
+        int     num_hyperthreads;       /* hyperthreading */
+        int     error_checking;         /* benchmark was run with error checking enabled */
 };
 void gwbench_add_data (gwhandle *, struct gwbench_add_struct *);
 void gwbench_write_data (void);
 void gwbench_get_num_benchmarks (double, unsigned long, unsigned long, signed long, unsigned long, int, int, int, int,
-				 unsigned long *, unsigned long *, int *, int *);
+                                 unsigned long *, unsigned long *, int *, int *);
 
 /******************************************************************************
 *                             Internal Routines                               *

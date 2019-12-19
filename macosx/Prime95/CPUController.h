@@ -9,18 +9,18 @@
 #import <Cocoa/Cocoa.h>
 
 @interface CPUController : NSWindowController {
-	IBOutlet NSTextField *textField;
-	int	hoursPerDay;
-	int	dayMemory;
-	int	nightMemory;
-	int	memoryMax;
-	int	memoryEnabled;
-	NSString *dayStartTime;
-	NSString *dayEndTime;
-	unsigned int origDayMemory;
-	unsigned int origNightMemory;
-	unsigned int origDayStartTime;
-	unsigned int origDayEndTime;
+        IBOutlet NSTextField *textField;
+        int     hoursPerDay;
+        int     dayMemory;
+        int     nightMemory;
+        int     memoryMax;
+        int     memoryEnabled;
+        NSString *dayStartTime;
+        NSString *dayEndTime;
+        unsigned int origDayMemory;
+        unsigned int origNightMemory;
+        unsigned int origDayStartTime;
+        unsigned int origDayEndTime;
 }
 
 @property(readwrite, assign) int hoursPerDay;

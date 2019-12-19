@@ -10,7 +10,7 @@
 
 
 @interface QuitGIMPSController : NSWindowController {
-	NSString *explanation;
+        NSString *explanation;
 }
 
 @property(readwrite, retain) NSString *explanation;

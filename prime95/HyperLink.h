@@ -55,12 +55,12 @@ public:
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CHyperLink)
-	public:
+        public:
     virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual BOOL DestroyWindow();
-	protected:
+        virtual BOOL DestroyWindow();
+        protected:
     virtual void PreSubclassWindow();
-	//}}AFX_VIRTUAL
+        //}}AFX_VIRTUAL
 
 // Implementation
 public:

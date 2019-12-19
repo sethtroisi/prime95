@@ -47,8 +47,8 @@ SERVICE_STATUS_HANDLE   sshStatusHandle;
 DWORD                   dwErr = 0;
 BOOL                    bDebug = FALSE;
 TCHAR                   szErr[256];
-char			SZSERVICENAME[32];
-char			SZSERVICEDISPLAYNAME[32];
+char                    SZSERVICENAME[32];
+char                    SZSERVICEDISPLAYNAME[32];
 
 // internal function prototypes
 VOID WINAPI service_ctrl(DWORD dwCtrlCode);
@@ -88,24 +88,24 @@ void main(int argc, char **argv)
 /* Change the working directory to the same directory that */
 /* the executable is located. */
 
-	{
-		char	buf[256];
-		GetModuleFileName (NULL, buf, sizeof (buf));
-		strrchr (buf, '\\')[1] = 0;
-		_chdir (buf);
-	}
+        {
+                char    buf[256];
+                GetModuleFileName (NULL, buf, sizeof (buf));
+                strrchr (buf, '\\')[1] = 0;
+                _chdir (buf);
+        }
 
 /* Initialize gwnum call back routines.  Using callback routines lets the */
 /* gwnum library have a nice clean interface for users that do not need */
 /* additional functionality that only prime95 uses. */
 
-	StopCheckRoutine = stopCheck;
-	OutputBothRoutine = OutputBoth;
+        StopCheckRoutine = stopCheck;
+        OutputBothRoutine = OutputBoth;
 
 /* Read INI file.  Let the service name be configurable, so that */
 /* dual CPU machines can start 2 services */
 
-	GetIniSettings();
+        GetIniSettings();
 
 /* Process command line */
     
@@ -123,7 +123,7 @@ void main(int argc, char **argv)
         else if ( _stricmp( "debug", argv[1]+1 ) == 0 )
         {
             bDebug = TRUE;
-	    DEBUGGING = TRUE;
+            DEBUGGING = TRUE;
             CmdDebugService(argc, argv);
         }
         else
@@ -299,7 +299,7 @@ BOOL ReportStatusToSCMgr(DWORD dwCurrentState,
             ssStatus.dwControlsAccepted = 0;
         else
             ssStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP |
-					  SERVICE_ACCEPT_SHUTDOWN;
+                                          SERVICE_ACCEPT_SHUTDOWN;
 
         ssStatus.dwCurrentState = dwCurrentState;
         ssStatus.dwWin32ExitCode = dwWin32ExitCode;

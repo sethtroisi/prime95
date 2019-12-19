@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface AboutController : NSWindowController {
-	IBOutlet NSTextField *textField;
+        IBOutlet NSTextField *textField;
 }
 
 - (void)reInit;

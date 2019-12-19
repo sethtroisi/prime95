@@ -10,7 +10,7 @@
 
 @interface UnreserveController : NSWindowController {
 
-	int	exponent;
+        int     exponent;
 }
 
 @property(readwrite, assign) int exponent;

@@ -27,24 +27,24 @@
 @class WorkerWindowsController;
 
 @interface AppController : NSObject {
-	AboutController *aboutController;
-	BenchmarkController *benchmarkController;
-	ContinueController *continueController;
-	CPUController *cpuController;
-	ECMController *ecmController;
-	ManualCommunicationController *manualCommunicationController;
-	Pminus1Controller *pminus1Controller;
-	PreferencesController *preferencesController;
-	PrimeNetController *primeNetController;
-	PRPController *prpController;
-	QuitGIMPSController *quitGIMPSController;
-	StatusController *statusController;
-	StopController *stopController;
-	TestController *testController;
-	TimeController *timeController;
-	TortureTestController *tortureTestController;
-	UnreserveController *unreserveController;
-	WorkerWindowsController *workerWindowsController;
+        AboutController *aboutController;
+        BenchmarkController *benchmarkController;
+        ContinueController *continueController;
+        CPUController *cpuController;
+        ECMController *ecmController;
+        ManualCommunicationController *manualCommunicationController;
+        Pminus1Controller *pminus1Controller;
+        PreferencesController *preferencesController;
+        PrimeNetController *primeNetController;
+        PRPController *prpController;
+        QuitGIMPSController *quitGIMPSController;
+        StatusController *statusController;
+        StopController *stopController;
+        TestController *testController;
+        TimeController *timeController;
+        TortureTestController *tortureTestController;
+        UnreserveController *unreserveController;
+        WorkerWindowsController *workerWindowsController;
 }
 
 - (IBAction)showAboutPanel:(id)sender;

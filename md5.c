@@ -22,7 +22,7 @@ documentation and/or software. */
 /* MD5 context. */
 typedef struct {
   uint32_t state[4];                                   /* state (ABCD) */
-  uint32_t count[2];	        /* number of bits, modulo 2^64 (lsb first) */
+  uint32_t count[2];            /* number of bits, modulo 2^64 (lsb first) */
   unsigned char buffer[64];                         /* input buffer */
 } MD5_CTX;
 
@@ -106,9 +106,9 @@ void MD5Init (MD5_CTX *context)                           /* context */
   operation, processing another message block, and updating the
   context. */
 void MD5Update (
-	MD5_CTX *context,                                /* context */
-	unsigned char *input,                            /* input block */
-	unsigned int inputLen)                     /* length of input block */
+        MD5_CTX *context,                                /* context */
+        unsigned char *input,                            /* input block */
+        unsigned int inputLen)                     /* length of input block */
 {
   unsigned int i, index, partLen;
 
@@ -147,8 +147,8 @@ void MD5Update (
   the message digest and zeroizing the context.
  */
 void MD5Final (
-	unsigned char digest[16],                       /* message digest */
-	MD5_CTX *context)                               /* context */
+        unsigned char digest[16],                       /* message digest */
+        MD5_CTX *context)                               /* context */
 {
   unsigned char bits[8];
   unsigned int index, padLen;
@@ -173,8 +173,8 @@ void MD5Final (
 
 /* MD5 basic transformation. Transforms state based on block. */
 void MD5Transform (
-	uint32_t state[4],
-	unsigned char block[64])
+        uint32_t state[4],
+        unsigned char block[64])
 {
   uint32_t a = state[0], b = state[1], c = state[2], d = state[3], x[16];
 
@@ -264,9 +264,9 @@ void MD5Transform (
 /* Encodes input (uint32_t) into output (unsigned char). Assumes len is
   a multiple of 4. */
 void Encode (
-	unsigned char *output,
-	uint32_t *input,
-	unsigned int len)
+        unsigned char *output,
+        uint32_t *input,
+        unsigned int len)
 {
   unsigned int i, j;
 
@@ -281,9 +281,9 @@ void Encode (
 /* Decodes input (unsigned char) into output (uint32_t). Assumes len is
   a multiple of 4. */
 void Decode (
-	uint32_t *output,
-	unsigned char *input,
-	unsigned int len)
+        uint32_t *output,
+        unsigned char *input,
+        unsigned int len)
 {
   unsigned int i, j;
 
@@ -294,45 +294,45 @@ void Decode (
 
 /* Digests a string and converts to 16 byte output. */
 void md5_raw_output (
-	unsigned char output[16],
-	char *string)
+        unsigned char output[16],
+        char *string)
 {
-	MD5_CTX context;
-	unsigned int len = (unsigned int) strlen (string);
+        MD5_CTX context;
+        unsigned int len = (unsigned int) strlen (string);
   
-	MD5Init (&context);
-	MD5Update (&context, (unsigned char *) string, len);
-	MD5Final (output, &context);
+        MD5Init (&context);
+        MD5Update (&context, (unsigned char *) string, len);
+        MD5Final (output, &context);
 }
 
 /* Digests a string and converts to 32 byte hex string output. */
 void md5_raw_input (
-	char output[33],
-	unsigned char *buf,
-	unsigned int len)
+        char output[33],
+        unsigned char *buf,
+        unsigned int len)
 {
-	MD5_CTX context;
-	unsigned char digest[16];
-	int	i;
+        MD5_CTX context;
+        unsigned char digest[16];
+        int     i;
   
-	MD5Init (&context);
-	MD5Update (&context, buf, len);
-	MD5Final (digest, &context);
+        MD5Init (&context);
+        MD5Update (&context, buf, len);
+        MD5Final (digest, &context);
 
-	for (i = 0; i < 16; i++) {
-		sprintf (output, "%02x", digest[i]);
-		output += 2;
-	}
+        for (i = 0; i < 16; i++) {
+                sprintf (output, "%02x", digest[i]);
+                output += 2;
+        }
 }
 
 /* Digests a string and converts to 32 byte hex string output. */
 void md5 (
-	char output[33],
-	const char *string)
+        char output[33],
+        const char *string)
 {
-	md5_raw_input (output,
-		       (unsigned char *) string,
-		       (unsigned int) strlen (string));
+        md5_raw_input (output,
+                       (unsigned char *) string,
+                       (unsigned int) strlen (string));
 }
 
 #undef F

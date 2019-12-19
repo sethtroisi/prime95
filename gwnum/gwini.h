@@ -65,12 +65,12 @@ void IniSectionWriteFloat (const char *, const char *, const char *, float);
 void IniDelayWrites (const char *);
 void IniResumeImmediateWrites (const char *);
 
-extern void (*INI_ERROR_CALLBACK)(const char *, int, const char *);	/* Callback routine when illegal line read from INI file. */
-									/* Arguments are file name, line number, text on the line. */
-#define IniSetErrorCallback(n)	(INI_ERROR_CALLBACK = n)
+extern void (*INI_ERROR_CALLBACK)(const char *, int, const char *);     /* Callback routine when illegal line read from INI file. */
+                                                                        /* Arguments are file name, line number, text on the line. */
+#define IniSetErrorCallback(n)  (INI_ERROR_CALLBACK = n)
 
-void IniFileReread (const char *);					/* Force the INI file to be re-read from disk */
-void IniAddFileMerge (const char *, const char *, const char *);	/* Merge one INI file into another.  Prime95 calls these .add files */
+void IniFileReread (const char *);                                      /* Force the INI file to be re-read from disk */
+void IniAddFileMerge (const char *, const char *, const char *);        /* Merge one INI file into another.  Prime95 calls these .add files */
 
 const char *IniSectionGetStringRaw (const char *, const char *, const char *);
 const char *IniSectionGetNthStringRaw (const char *, const char *, const char *, int);

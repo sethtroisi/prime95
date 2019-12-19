@@ -11,11 +11,11 @@
 
 /* Some necessary definitions */
 
-#define NO_GUI		0
+#define NO_GUI          0
 #ifdef X86_64
-#define PORT	10
+#define PORT    10
 #else
-#define PORT	9
+#define PORT    9
 #endif
 
 /* Include our common C header files */
@@ -36,12 +36,12 @@
 /* Redefine some things with better equivalents on the Mac */
 
 #undef ASSERTG
-#define ASSERTG(a)	NSCAssert(a,@"Assertion raised")
+#define ASSERTG(a)      NSCAssert(a,@"Assertion raised")
 
 /* Declare some functions */
 
 void Sleep (long);
-#define max(a,b)	((a)>(b)?(a):(b))
+#define max(a,b)        ((a)>(b)?(a):(b))
 void BiggerFonts ();
 void SmallerFonts ();
 

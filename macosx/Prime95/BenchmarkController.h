@@ -9,28 +9,28 @@
 #import <Cocoa/Cocoa.h>
 
 @interface BenchmarkController : NSWindowController {
-	int	benchType;
-	int	minFFT;
-	int	maxFFT;
-	int	minmaxFFTEnabled;
-	int	minBenchableFFT;
-	int	maxBenchableFFT;
-	int	errchk;
-	int	allComplex;
-	int	limitFFTSizes;
-	int	limitFFTSizesEnabled;
-	NSString *benchCores;
-	int	benchCoresEnabled;
-	int	hyperthreading;
-	int	hyperthreadingEnabled;
-	NSString *benchWorkers;
-	int	benchWorkersEnabled;
-	int	allFFTImpl;
-	int	allFFTImplEnabled;
-	int	benchTime;
-	int	benchTimeEnabled;
-	int	minBenchTime;
-	int	maxBenchTime;
+        int     benchType;
+        int     minFFT;
+        int     maxFFT;
+        int     minmaxFFTEnabled;
+        int     minBenchableFFT;
+        int     maxBenchableFFT;
+        int     errchk;
+        int     allComplex;
+        int     limitFFTSizes;
+        int     limitFFTSizesEnabled;
+        NSString *benchCores;
+        int     benchCoresEnabled;
+        int     hyperthreading;
+        int     hyperthreadingEnabled;
+        NSString *benchWorkers;
+        int     benchWorkersEnabled;
+        int     allFFTImpl;
+        int     allFFTImplEnabled;
+        int     benchTime;
+        int     benchTimeEnabled;
+        int     minBenchTime;
+        int     maxBenchTime;
 }
 
 @property(readwrite, assign) int benchType;
@@ -56,8 +56,8 @@
 @property(readwrite, assign) int minBenchTime;
 @property(readwrite, assign) int maxBenchTime;
 
-	- (void)reInit;
-	- (void)setEnableds;
+        - (void)reInit;
+        - (void)setEnableds;
 - (IBAction)ok:(id)sender;
 
 @end

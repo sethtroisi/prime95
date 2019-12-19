@@ -43,7 +43,7 @@
 
 
 /* 7/29/09 - Modified to eliminate static variables and */
-/*	     remove routines I won't need. */
+/*           remove routines I won't need. */
 
 /* Period parameters */  
 #define N 624
@@ -53,8 +53,8 @@
 #define LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
 struct mt_state {
-	unsigned long mt[N]; /* the array for the state vector */
-	int mti;
+        unsigned long mt[N]; /* the array for the state vector */
+        int mti;
 };
 
 /* initializes mt[N] with a seed */
@@ -63,7 +63,7 @@ void init_genrand(struct mt_state *x, unsigned long s)
     x->mt[0]= s & 0xffffffffUL;
     for (x->mti=1; x->mti<N; x->mti++) {
         x->mt[x->mti] = 
-	    (1812433253UL * (x->mt[x->mti-1] ^ (x->mt[x->mti-1] >> 30)) + x->mti); 
+            (1812433253UL * (x->mt[x->mti-1] ^ (x->mt[x->mti-1] >> 30)) + x->mti); 
         /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
         /* In the previous versions, MSBs of the seed affect   */
         /* only MSBs of the array mt[].                        */

@@ -542,7 +542,7 @@ inline dd_real nint(const dd_real &a) {
     lo = 0.0;
     if (fabs(hi-a.hi) == 0.5 && a.lo < 0.0) {
       /* There is a tie in the high word, consult the low word 
-	 to break the tie. */
+         to break the tie. */
       hi -= 1.0;      /* NOTE: This does not cause INEXACT. */
     }
   }

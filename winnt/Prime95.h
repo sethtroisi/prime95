@@ -9,7 +9,7 @@
 #include <hwloc.h>
 #include <gmp.h>
 //#define SERVER_TESTING
-#define NO_GUI		1
+#define NO_GUI          1
 #include "common.h"
 #include "cpuid.h"
 #include "gwnum.h"
@@ -23,6 +23,6 @@
 
 // Global variables
 
-extern int THREAD_STOP;			// TRUE if thread should stop
-extern int DEBUGGING;			// TRUE if -debug switch used
-extern int C_OPTION;			// TRUE if -c switch used
+extern int THREAD_STOP;                 // TRUE if thread should stop
+extern int DEBUGGING;                   // TRUE if -debug switch used
+extern int C_OPTION;                    // TRUE if -c switch used

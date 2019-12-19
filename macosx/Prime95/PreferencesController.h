@@ -9,18 +9,18 @@
 #import <Cocoa/Cocoa.h>
 
 @interface PreferencesController : NSWindowController {
-	int	iterationsOutput;
-	int	iterationsResultsFile;
-	int	writeSaveFileMinutes;
-	int	modemRetryMinutes;
-	int	modemRetryMinutesEnabled;
-	int	primenetOptionsEnabled;
-	int	networkRetryMinutes;
-	int	daysOfWork;
-	int	daysBetweenEndDates;
-	int	numberOfBackupFiles;
-	int	makeNoise;
-	int	runOnBattery;
+        int     iterationsOutput;
+        int     iterationsResultsFile;
+        int     writeSaveFileMinutes;
+        int     modemRetryMinutes;
+        int     modemRetryMinutesEnabled;
+        int     primenetOptionsEnabled;
+        int     networkRetryMinutes;
+        int     daysOfWork;
+        int     daysBetweenEndDates;
+        int     numberOfBackupFiles;
+        int     makeNoise;
+        int     runOnBattery;
         int     defeatPowerSave;
 }
 

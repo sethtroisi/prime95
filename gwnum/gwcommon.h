@@ -10,10 +10,10 @@
 #define _GWCOMMON_H
 
 #ifndef TRUE
-#define TRUE	1
+#define TRUE    1
 #endif
 #ifndef FALSE
-#define FALSE	0
+#define FALSE   0
 #endif
 
 /* In many cases where the C code is interfacing with the assembly code */
@@ -23,16 +23,16 @@
 /* values that can be either an integer or a pointer. */
 
 #ifdef _MSC_VER
-typedef __int32			int32_t;
-typedef unsigned __int32	uint32_t;
-typedef __int64			int64_t;
-typedef unsigned __int64	uint64_t;
+typedef __int32                 int32_t;
+typedef unsigned __int32        uint32_t;
+typedef __int64                 int64_t;
+typedef unsigned __int64        uint64_t;
 #ifdef _WIN64
-typedef __int64			intptr_t;
-typedef unsigned __int64	uintptr_t;
+typedef __int64                 intptr_t;
+typedef unsigned __int64        uintptr_t;
 #else
-typedef int			intptr_t;
-typedef unsigned int		uintptr_t;
+typedef int                     intptr_t;
+typedef unsigned int            uintptr_t;
 #endif
 #else
 #include "inttypes.h"
@@ -42,10 +42,10 @@ typedef unsigned int		uintptr_t;
 
 #include <assert.h>
 #ifdef GDEBUG
-#define ASSERTG		assert
+#define ASSERTG         assert
 #else
 #define ASSERTG(a)
 #endif
-#define GWASSERT  	assert
+#define GWASSERT        assert
 
 #endif

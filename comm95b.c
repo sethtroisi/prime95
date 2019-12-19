@@ -11,9 +11,9 @@
 
 /* Common global variables */
 
-#define MAX_THREAD_HANDLES	1024
-HANDLE	THREAD_HANDLES[MAX_THREAD_HANDLES] = {0};
-int	NUM_THREAD_HANDLES = 0;
+#define MAX_THREAD_HANDLES      1024
+HANDLE  THREAD_HANDLES[MAX_THREAD_HANDLES] = {0};
+int     NUM_THREAD_HANDLES = 0;
 
 /* Common routines */
 
@@ -21,41 +21,41 @@ int	NUM_THREAD_HANDLES = 0;
 
 int isWindows95 ()
 {
-	OSVERSIONINFO info;
+        OSVERSIONINFO info;
 
-	info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	if (GetVersionEx (&info)) {
-		return (info.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS);
-	}
-	return (FALSE);
+        info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+        if (GetVersionEx (&info)) {
+                return (info.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS);
+        }
+        return (FALSE);
 }
 
 /* Is this Windows 2000 or a later Windows NT version? */
 
 int isWindows2000 ()
 {
-	OSVERSIONINFO info;
+        OSVERSIONINFO info;
 
-	info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	if (GetVersionEx (&info)) {
-		return (info.dwPlatformId == VER_PLATFORM_WIN32_NT &&
-			info.dwMajorVersion >= 5);
-	}
-	return (FALSE);
+        info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+        if (GetVersionEx (&info)) {
+                return (info.dwPlatformId == VER_PLATFORM_WIN32_NT &&
+                        info.dwMajorVersion >= 5);
+        }
+        return (FALSE);
 }
 
 /* Is this Windows Vista or a later Windows version? */
 
 int isWindowsVista ()
 {
-	OSVERSIONINFO info;
+        OSVERSIONINFO info;
 
-	info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	if (GetVersionEx (&info)) {
-		return (info.dwPlatformId == VER_PLATFORM_WIN32_NT &&
-			info.dwMajorVersion >= 6);
-	}
-	return (FALSE);
+        info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+        if (GetVersionEx (&info)) {
+                return (info.dwPlatformId == VER_PLATFORM_WIN32_NT &&
+                        info.dwMajorVersion >= 6);
+        }
+        return (FALSE);
 }
 
 
@@ -63,7 +63,7 @@ int isWindowsVista ()
 
 void clearThreadHandleArray (void)
 {
-	NUM_THREAD_HANDLES = 0;
+        NUM_THREAD_HANDLES = 0;
 }
 
 /* Set the thread priority correctly.  Most screen savers run at priority 4. */
@@ -72,35 +72,35 @@ void clearThreadHandleArray (void)
 /* program usually runs in the background. */ 
 
 void setOsThreadPriority (
-	int	priority)		/* Priority, 1=low, 9=high */
+        int     priority)               /* Priority, 1=low, 9=high */
 {
-	HANDLE	h;
-	int	pri_class, thread_pri;
+        HANDLE  h;
+        int     pri_class, thread_pri;
 
 /* Get and remember the thread handle */
 
-	h = GetCurrentThread ();
-	if (NUM_THREAD_HANDLES < MAX_THREAD_HANDLES)
-		THREAD_HANDLES[NUM_THREAD_HANDLES++] = h;
+        h = GetCurrentThread ();
+        if (NUM_THREAD_HANDLES < MAX_THREAD_HANDLES)
+                THREAD_HANDLES[NUM_THREAD_HANDLES++] = h;
 
 /* Set the thread priority */
 
-	if (priority <= 1) pri_class = NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_IDLE;
-	if (priority == 2) pri_class = IDLE_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_LOWEST;
-	if (priority == 3) pri_class = IDLE_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_BELOW_NORMAL;
-	if (priority == 4) pri_class = BELOW_NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_LOWEST;
-	if (priority == 5) pri_class = BELOW_NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_BELOW_NORMAL;
-	if (priority == 6) pri_class = NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_LOWEST;
-	if (priority == 7) pri_class = NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_BELOW_NORMAL;
-	if (priority == 8) pri_class = ABOVE_NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_LOWEST;
-	if (priority >= 9) pri_class = ABOVE_NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_BELOW_NORMAL;
+        if (priority <= 1) pri_class = NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_IDLE;
+        if (priority == 2) pri_class = IDLE_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_LOWEST;
+        if (priority == 3) pri_class = IDLE_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_BELOW_NORMAL;
+        if (priority == 4) pri_class = BELOW_NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_LOWEST;
+        if (priority == 5) pri_class = BELOW_NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_BELOW_NORMAL;
+        if (priority == 6) pri_class = NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_LOWEST;
+        if (priority == 7) pri_class = NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_BELOW_NORMAL;
+        if (priority == 8) pri_class = ABOVE_NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_LOWEST;
+        if (priority >= 9) pri_class = ABOVE_NORMAL_PRIORITY_CLASS, thread_pri = THREAD_PRIORITY_BELOW_NORMAL;
 
-	SetPriorityClass (GetCurrentProcess (), pri_class);
-	SetThreadPriority (h, thread_pri);
+        SetPriorityClass (GetCurrentProcess (), pri_class);
+        SetThreadPriority (h, thread_pri);
 
 /* Disable thread priority boost */
 
-	SetThreadPriorityBoost (h, TRUE);
+        SetThreadPriorityBoost (h, TRUE);
 }
 
 /* Register a thread termination.  We remove the thread handle from the */
@@ -108,17 +108,17 @@ void setOsThreadPriority (
 
 void registerThreadTermination (void)
 {
-	int	i;
-	HANDLE	h;
+        int     i;
+        HANDLE  h;
 
 /* Get the thread handle and remove it from the thread handle array */
 
-	h = GetCurrentThread ();
-	for (i = 0; i < NUM_THREAD_HANDLES; i++) {
-		if (THREAD_HANDLES[i] != h) break;
-		THREAD_HANDLES[i] = THREAD_HANDLES[--NUM_THREAD_HANDLES];
-		break;
-	}
+        h = GetCurrentThread ();
+        for (i = 0; i < NUM_THREAD_HANDLES; i++) {
+                if (THREAD_HANDLES[i] != h) break;
+                THREAD_HANDLES[i] = THREAD_HANDLES[--NUM_THREAD_HANDLES];
+                break;
+        }
 }
 
 /* When stopping or exiting we raise the priority of all worker threads */
@@ -127,19 +127,19 @@ void registerThreadTermination (void)
 
 void raiseAllWorkerThreadPriority (void)
 {
-	int	i;
+        int     i;
 
-	SetPriorityClass (GetCurrentProcess (), NORMAL_PRIORITY_CLASS);
+        SetPriorityClass (GetCurrentProcess (), NORMAL_PRIORITY_CLASS);
 
 /* Loop through the thread handle array raising priority and */
 /* setting affinity to run on any CPU. */
 
-	for (i = 0; i < NUM_THREAD_HANDLES; i++) {
-		SetThreadPriority (THREAD_HANDLES[i],
-				   THREAD_PRIORITY_ABOVE_NORMAL);
-		if (! isWindows95 ())
-			SetThreadAffinityMask (THREAD_HANDLES[i], -1);
-	}
+        for (i = 0; i < NUM_THREAD_HANDLES; i++) {
+                SetThreadPriority (THREAD_HANDLES[i],
+                                   THREAD_PRIORITY_ABOVE_NORMAL);
+                if (! isWindows95 ())
+                        SetThreadAffinityMask (THREAD_HANDLES[i], -1);
+        }
 }
 
 
@@ -160,7 +160,7 @@ void raiseAllWorkerThreadPriority (void)
 #include <vdmdbg.h>
 
 typedef struct {
-	BOOL           match;
+        BOOL           match;
 } EnumInfoStruct ;
 
 BOOL WINAPI Enum16( DWORD dwThreadId, WORD hMod16, WORD hTask16,
@@ -168,67 +168,67 @@ BOOL WINAPI Enum16( DWORD dwThreadId, WORD hMod16, WORD hTask16,
 
 void checkPauseListCallback (void)
 {
-	OSVERSIONINFO	osver;
-	HINSTANCE	hInstLib = NULL;
-	HINSTANCE	hInstLib2 = NULL;
-	BOOL		bFlag;
-	LPDWORD		lpdwPIDs = NULL;
-	DWORD		dwSize, dwSize2, dwIndex;
-	char		szFileName[ MAX_PATH ];
+        OSVERSIONINFO   osver;
+        HINSTANCE       hInstLib = NULL;
+        HINSTANCE       hInstLib2 = NULL;
+        BOOL            bFlag;
+        LPDWORD         lpdwPIDs = NULL;
+        DWORD           dwSize, dwSize2, dwIndex;
+        char            szFileName[ MAX_PATH ];
 
 // ToolHelp Function Pointers.
 
-	HANDLE (WINAPI *lpfCreateToolhelp32Snapshot)(DWORD,DWORD);
-	BOOL (WINAPI *lpfProcess32First)(HANDLE,LPPROCESSENTRY32);
-	BOOL (WINAPI *lpfProcess32Next)(HANDLE,LPPROCESSENTRY32);
+        HANDLE (WINAPI *lpfCreateToolhelp32Snapshot)(DWORD,DWORD);
+        BOOL (WINAPI *lpfProcess32First)(HANDLE,LPPROCESSENTRY32);
+        BOOL (WINAPI *lpfProcess32Next)(HANDLE,LPPROCESSENTRY32);
 
 // PSAPI Function Pointers.
 
-	BOOL (WINAPI *lpfEnumProcesses)(DWORD *, DWORD, DWORD *);
-	BOOL (WINAPI *lpfEnumProcessModules)(HANDLE, HMODULE*, DWORD, LPDWORD);
-	DWORD (WINAPI *lpfGetModuleFileNameEx)(HANDLE, HMODULE, LPTSTR, DWORD);
+        BOOL (WINAPI *lpfEnumProcesses)(DWORD *, DWORD, DWORD *);
+        BOOL (WINAPI *lpfEnumProcessModules)(HANDLE, HMODULE*, DWORD, LPDWORD);
+        DWORD (WINAPI *lpfGetModuleFileNameEx)(HANDLE, HMODULE, LPTSTR, DWORD);
 
 // VDMDBG Function Pointers.
 
-	INT (WINAPI *lpfVDMEnumTaskWOWEx)(DWORD, TASKENUMPROCEX, LPARAM);
+        INT (WINAPI *lpfVDMEnumTaskWOWEx)(DWORD, TASKENUMPROCEX, LPARAM);
 
 // Check to see if were running under Windows95 or Windows NT.
 
-	osver.dwOSVersionInfoSize = sizeof( osver );
-	if ( !GetVersionEx( &osver ) ) return;
+        osver.dwOSVersionInfoSize = sizeof( osver );
+        if ( !GetVersionEx( &osver ) ) return;
 
 // If Windows NT:
 
-	if ( osver.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
+        if ( osver.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
 
 // Load library and get the procedures explicitly. We do
 // this so that we don't have to worry about modules using
 // this code failing to load under Windows 95, because
 // it can't resolve references to the PSAPI.DLL.
 
-		hInstLib = LoadLibraryA( "PSAPI.DLL" );
-		if ( hInstLib == NULL ) goto ntdone;
-		hInstLib2 = LoadLibraryA( "VDMDBG.DLL" );
-		if ( hInstLib2 == NULL ) goto ntdone;
+                hInstLib = LoadLibraryA( "PSAPI.DLL" );
+                if ( hInstLib == NULL ) goto ntdone;
+                hInstLib2 = LoadLibraryA( "VDMDBG.DLL" );
+                if ( hInstLib2 == NULL ) goto ntdone;
 
 // Get procedure addresses.
 
-		lpfEnumProcesses = (BOOL(WINAPI *)(DWORD *,DWORD,DWORD*))
-			GetProcAddress( hInstLib, "EnumProcesses" );
-		lpfEnumProcessModules = (BOOL(WINAPI *)(HANDLE, HMODULE *,
-			DWORD, LPDWORD)) GetProcAddress( hInstLib,
-			"EnumProcessModules" );
-		lpfGetModuleFileNameEx =(DWORD (WINAPI *)(HANDLE, HMODULE,
-			LPTSTR, DWORD )) GetProcAddress( hInstLib,
-			"GetModuleFileNameExA" );
-		lpfVDMEnumTaskWOWEx =(INT(WINAPI *)( DWORD, TASKENUMPROCEX,
-			LPARAM))GetProcAddress( hInstLib2,
-			"VDMEnumTaskWOWEx" );
-		if ( lpfEnumProcesses == NULL ||
-		     lpfEnumProcessModules == NULL ||
-		     lpfGetModuleFileNameEx == NULL ||
-		     lpfVDMEnumTaskWOWEx == NULL)
-			goto ntdone;
+                lpfEnumProcesses = (BOOL(WINAPI *)(DWORD *,DWORD,DWORD*))
+                        GetProcAddress( hInstLib, "EnumProcesses" );
+                lpfEnumProcessModules = (BOOL(WINAPI *)(HANDLE, HMODULE *,
+                        DWORD, LPDWORD)) GetProcAddress( hInstLib,
+                        "EnumProcessModules" );
+                lpfGetModuleFileNameEx =(DWORD (WINAPI *)(HANDLE, HMODULE,
+                        LPTSTR, DWORD )) GetProcAddress( hInstLib,
+                        "GetModuleFileNameExA" );
+                lpfVDMEnumTaskWOWEx =(INT(WINAPI *)( DWORD, TASKENUMPROCEX,
+                        LPARAM))GetProcAddress( hInstLib2,
+                        "VDMEnumTaskWOWEx" );
+                if ( lpfEnumProcesses == NULL ||
+                     lpfEnumProcessModules == NULL ||
+                     lpfGetModuleFileNameEx == NULL ||
+                     lpfVDMEnumTaskWOWEx == NULL)
+                        goto ntdone;
 
 // Call the PSAPI function EnumProcesses to get all of the
 // ProcID's currently in the system.
@@ -243,92 +243,92 @@ void checkPauseListCallback (void)
 // actually allocate a buffer large enough for all the
 // PIDs in the system.
 
-		dwSize2 = 256 * sizeof (DWORD);
-		do {
-			if (lpdwPIDs) {
-				HeapFree (GetProcessHeap(), 0, lpdwPIDs);
-				dwSize2 *= 2;
-			}
-			lpdwPIDs = (LPDWORD)
-				HeapAlloc (GetProcessHeap(), 0, dwSize2);
-			if (lpdwPIDs == NULL) goto ntdone;
-			if (!lpfEnumProcesses (lpdwPIDs, dwSize2, &dwSize))
-				goto ntdone;
-		} while (dwSize == dwSize2);
+                dwSize2 = 256 * sizeof (DWORD);
+                do {
+                        if (lpdwPIDs) {
+                                HeapFree (GetProcessHeap(), 0, lpdwPIDs);
+                                dwSize2 *= 2;
+                        }
+                        lpdwPIDs = (LPDWORD)
+                                HeapAlloc (GetProcessHeap(), 0, dwSize2);
+                        if (lpdwPIDs == NULL) goto ntdone;
+                        if (!lpfEnumProcesses (lpdwPIDs, dwSize2, &dwSize))
+                                goto ntdone;
+                } while (dwSize == dwSize2);
 
 // How many ProcID's did we get?
 
-		dwSize /= sizeof (DWORD);
+                dwSize /= sizeof (DWORD);
 
 // Loop through each ProcID.
 
-		for (dwIndex = 0; dwIndex < dwSize; dwIndex++) {
-			HMODULE		hMod;
-			HANDLE		hProcess;
+                for (dwIndex = 0; dwIndex < dwSize; dwIndex++) {
+                        HMODULE         hMod;
+                        HANDLE          hProcess;
 
 // Open the process (if we can... security does not
 // permit every process in the system).
 
-			hProcess = OpenProcess(
-				PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-				FALSE, lpdwPIDs[ dwIndex ] );
-			if (!hProcess) continue;
+                        hProcess = OpenProcess(
+                                PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                                FALSE, lpdwPIDs[ dwIndex ] );
+                        if (!hProcess) continue;
 
 // Here we call EnumProcessModules to get only the
 // first module in the process this is important,
 // because this will be the .EXE module for which we
 // will retrieve the full path name in a second.
 
-			if (!lpfEnumProcessModules (hProcess, &hMod,
-					sizeof (hMod), &dwSize2)) {
-				CloseHandle (hProcess);
-				continue;
-			}
+                        if (!lpfEnumProcessModules (hProcess, &hMod,
+                                        sizeof (hMod), &dwSize2)) {
+                                CloseHandle (hProcess);
+                                continue;
+                        }
 
 // Get Full pathname:
 
-			if (!lpfGetModuleFileNameEx (hProcess,
-					hMod,
-					szFileName,
-					sizeof (szFileName))) {
-				CloseHandle (hProcess);
-				continue;
-			}
+                        if (!lpfGetModuleFileNameEx (hProcess,
+                                        hMod,
+                                        szFileName,
+                                        sizeof (szFileName))) {
+                                CloseHandle (hProcess);
+                                continue;
+                        }
 
-			CloseHandle (hProcess);
+                        CloseHandle (hProcess);
 
 // Regardless of OpenProcess success or failure, we
 // still call the enum func with the ProcID.
 
-			isInPauseList (szFileName);
+                        isInPauseList (szFileName);
 
 // Did we just bump into an NTVDM?
 
-			if (_stricmp (szFileName+(strlen(szFileName)-9),
-				"NTVDM.EXE")==0) {
-				EnumInfoStruct	sInfo;
+                        if (_stricmp (szFileName+(strlen(szFileName)-9),
+                                "NTVDM.EXE")==0) {
+                                EnumInfoStruct  sInfo;
 
 // Enum the 16-bit stuff.
 
-				lpfVDMEnumTaskWOWEx (lpdwPIDs[dwIndex],
-					(TASKENUMPROCEX) Enum16,
-					(LPARAM) &sInfo);
-			}
-		}
-ntdone:		if (lpdwPIDs) HeapFree (GetProcessHeap(), 0, lpdwPIDs);
-		if (hInstLib) FreeLibrary (hInstLib);
-		if (hInstLib2) FreeLibrary (hInstLib2);
-		return;
-	}
+                                lpfVDMEnumTaskWOWEx (lpdwPIDs[dwIndex],
+                                        (TASKENUMPROCEX) Enum16,
+                                        (LPARAM) &sInfo);
+                        }
+                }
+ntdone:         if (lpdwPIDs) HeapFree (GetProcessHeap(), 0, lpdwPIDs);
+                if (hInstLib) FreeLibrary (hInstLib);
+                if (hInstLib2) FreeLibrary (hInstLib2);
+                return;
+        }
 
 // If Windows 95:
 
-	else if (osver.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
-		HANDLE		hSnapShot = NULL;
-		PROCESSENTRY32	procentry;
+        else if (osver.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
+                HANDLE          hSnapShot = NULL;
+                PROCESSENTRY32  procentry;
 
-		hInstLib = LoadLibraryA ("Kernel32.DLL");
-		if (hInstLib == NULL) goto done95;
+                hInstLib = LoadLibraryA ("Kernel32.DLL");
+                if (hInstLib == NULL) goto done95;
 
 // Get procedure addresses.
 // We are linking to these functions of Kernel32
@@ -337,65 +337,65 @@ ntdone:		if (lpdwPIDs) HeapFree (GetProcessHeap(), 0, lpdwPIDs);
 // which does not have the Toolhelp32
 // functions in the Kernel 32.
 
-		lpfCreateToolhelp32Snapshot=
-			(HANDLE(WINAPI *)(DWORD,DWORD))
-				GetProcAddress( hInstLib,
-					"CreateToolhelp32Snapshot" );
-		lpfProcess32First=
-			(BOOL(WINAPI *)(HANDLE,LPPROCESSENTRY32))
-				GetProcAddress( hInstLib, "Process32First" );
-		lpfProcess32Next=
-			(BOOL(WINAPI *)(HANDLE,LPPROCESSENTRY32))
-				GetProcAddress( hInstLib, "Process32Next" );
-		if( lpfProcess32Next == NULL ||
-		    lpfProcess32First == NULL ||
-		    lpfCreateToolhelp32Snapshot == NULL ) goto done95;
+                lpfCreateToolhelp32Snapshot=
+                        (HANDLE(WINAPI *)(DWORD,DWORD))
+                                GetProcAddress( hInstLib,
+                                        "CreateToolhelp32Snapshot" );
+                lpfProcess32First=
+                        (BOOL(WINAPI *)(HANDLE,LPPROCESSENTRY32))
+                                GetProcAddress( hInstLib, "Process32First" );
+                lpfProcess32Next=
+                        (BOOL(WINAPI *)(HANDLE,LPPROCESSENTRY32))
+                                GetProcAddress( hInstLib, "Process32Next" );
+                if( lpfProcess32Next == NULL ||
+                    lpfProcess32First == NULL ||
+                    lpfCreateToolhelp32Snapshot == NULL ) goto done95;
 
 // Get a handle to a Toolhelp snapshot of the systems processes.
 
-		hSnapShot = lpfCreateToolhelp32Snapshot (
-			TH32CS_SNAPPROCESS, 0);
-		if (hSnapShot == INVALID_HANDLE_VALUE) {
-			hSnapShot = NULL;
-			goto done95;
-		}
+                hSnapShot = lpfCreateToolhelp32Snapshot (
+                        TH32CS_SNAPPROCESS, 0);
+                if (hSnapShot == INVALID_HANDLE_VALUE) {
+                        hSnapShot = NULL;
+                        goto done95;
+                }
 
 // Get the first process' information.
 
-		procentry.dwSize = sizeof (PROCESSENTRY32);
-		bFlag = lpfProcess32First (hSnapShot, &procentry);
+                procentry.dwSize = sizeof (PROCESSENTRY32);
+                bFlag = lpfProcess32First (hSnapShot, &procentry);
 
 // While there are processes, keep looping.
 
-		while (bFlag) {
+                while (bFlag) {
 
 // Call the enum func with the filename and ProcID.
 
-			isInPauseList (procentry.szExeFile);
+                        isInPauseList (procentry.szExeFile);
 
-			procentry.dwSize = sizeof(PROCESSENTRY32);
-			bFlag = lpfProcess32Next (hSnapShot, &procentry);
-		}
+                        procentry.dwSize = sizeof(PROCESSENTRY32);
+                        bFlag = lpfProcess32Next (hSnapShot, &procentry);
+                }
 
 // Free the library.
 
-done95:		if (hInstLib) FreeLibrary (hInstLib);
-		if (hSnapShot) CloseHandle (hSnapShot);
-		return;
-	}
+done95:         if (hInstLib) FreeLibrary (hInstLib);
+                if (hSnapShot) CloseHandle (hSnapShot);
+                return;
+        }
 
 // Unknown OS type
 
-	return;
+        return;
 }
 
 
 BOOL WINAPI Enum16 (DWORD dwThreadId, WORD hMod16, WORD hTask16,
       PSZ pszModName, PSZ pszFileName, LPARAM lpUserDefined)
 {
-	EnumInfoStruct *psInfo = (EnumInfoStruct *) lpUserDefined;
-	isInPauseList (pszFileName);
-	return (FALSE);
+        EnumInfoStruct *psInfo = (EnumInfoStruct *) lpUserDefined;
+        isInPauseList (pszFileName);
+        return (FALSE);
 }
 
 #else
@@ -412,96 +412,96 @@ void checkPauseListCallback (void)
 // This gets the name of the executable, but not the full path name.  Thus this is a partial fix
 // and we must include both methods.
 
-	HANDLE hProcessSnap;
-	PROCESSENTRY32 pe32;
+        HANDLE hProcessSnap;
+        PROCESSENTRY32 pe32;
 
 // Take a snapshot of all processes in the system.
 
-	hProcessSnap = CreateToolhelp32Snapshot (TH32CS_SNAPPROCESS, 0);
-	if (hProcessSnap != INVALID_HANDLE_VALUE) {
+        hProcessSnap = CreateToolhelp32Snapshot (TH32CS_SNAPPROCESS, 0);
+        if (hProcessSnap != INVALID_HANDLE_VALUE) {
 
 // Retrieve information about the first process, then next processes
 // looking for any process that forces us to pause
 
-		pe32.dwSize = sizeof (PROCESSENTRY32);
-		if (Process32First (hProcessSnap, &pe32)) do {
-			isInPauseList (pe32.szExeFile);
-		} while (Process32Next (hProcessSnap, &pe32));
+                pe32.dwSize = sizeof (PROCESSENTRY32);
+                if (Process32First (hProcessSnap, &pe32)) do {
+                        isInPauseList (pe32.szExeFile);
+                } while (Process32Next (hProcessSnap, &pe32));
 
 // Cleanup
 
-		CloseHandle( hProcessSnap );
-	}
+                CloseHandle( hProcessSnap );
+        }
 
 // The code below was our original attempt, but there was a complaint that this will not
 // detect some processes running as administrator (not enough privilege to OpenProcess).
 
-	{
-	LPDWORD		lpdwPIDs = NULL;
-	DWORD		dwSize, dwSize2, dwIndex;
-	char		szFileName[ MAX_PATH ];
+        {
+        LPDWORD         lpdwPIDs = NULL;
+        DWORD           dwSize, dwSize2, dwIndex;
+        char            szFileName[ MAX_PATH ];
 
 // Call the PSAPI function EnumProcesses to get all of the
 // ProcID's currently in the system.
 
-	dwSize2 = 256 * sizeof (DWORD);
-	do {
-		if (lpdwPIDs) {
-			HeapFree (GetProcessHeap(), 0, lpdwPIDs);
-			dwSize2 *= 2;
-		}
-		lpdwPIDs = (LPDWORD)
-			HeapAlloc (GetProcessHeap(), 0, dwSize2);
-		if (lpdwPIDs == NULL) goto ntdone;
-		if (!EnumProcesses (lpdwPIDs, dwSize2, &dwSize))
-			goto ntdone;
-	} while (dwSize == dwSize2);
+        dwSize2 = 256 * sizeof (DWORD);
+        do {
+                if (lpdwPIDs) {
+                        HeapFree (GetProcessHeap(), 0, lpdwPIDs);
+                        dwSize2 *= 2;
+                }
+                lpdwPIDs = (LPDWORD)
+                        HeapAlloc (GetProcessHeap(), 0, dwSize2);
+                if (lpdwPIDs == NULL) goto ntdone;
+                if (!EnumProcesses (lpdwPIDs, dwSize2, &dwSize))
+                        goto ntdone;
+        } while (dwSize == dwSize2);
 
 // How many ProcID's did we get?
 
-	dwSize /= sizeof (DWORD);
+        dwSize /= sizeof (DWORD);
 
 // Loop through each ProcID.
 
-	for (dwIndex = 0; dwIndex < dwSize; dwIndex++) {
-		HMODULE	hMod;
-		HANDLE	hProcess;
+        for (dwIndex = 0; dwIndex < dwSize; dwIndex++) {
+                HMODULE hMod;
+                HANDLE  hProcess;
 
 // Open the process (if we can... security does not
 // permit every process in the system).
 
-		hProcess = OpenProcess (
-			PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-			FALSE, lpdwPIDs[ dwIndex ] );
-		if (!hProcess) continue;
+                hProcess = OpenProcess (
+                        PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                        FALSE, lpdwPIDs[ dwIndex ] );
+                if (!hProcess) continue;
 
 // Here we call EnumProcessModules to get only the
 // first module in the process this is important,
 // because this will be the .EXE module for which we
 // will retrieve the full path name in a second.
 
-		if (!EnumProcessModules (hProcess, &hMod,
-					 sizeof (hMod), &dwSize2)) {
-			CloseHandle (hProcess);
-			continue;
-		}
+                if (!EnumProcessModules (hProcess, &hMod,
+                                         sizeof (hMod), &dwSize2)) {
+                        CloseHandle (hProcess);
+                        continue;
+                }
 
 // Get Full pathname:
 
-		if (!GetModuleFileNameEx (hProcess, hMod, szFileName,
-					  sizeof (szFileName))) {
-			CloseHandle (hProcess);
-			continue;
-		}
+                if (!GetModuleFileNameEx (hProcess, hMod, szFileName,
+                                          sizeof (szFileName))) {
+                        CloseHandle (hProcess);
+                        continue;
+                }
 
-		CloseHandle (hProcess);
+                CloseHandle (hProcess);
 
 // Does this process force us to pause?
 
-		isInPauseList (szFileName);
-	}
-ntdone:	if (lpdwPIDs) HeapFree (GetProcessHeap(), 0, lpdwPIDs);
-	}
+                isInPauseList (szFileName);
+        }
+ntdone: if (lpdwPIDs) HeapFree (GetProcessHeap(), 0, lpdwPIDs);
+        }
 }
 
 #endif
@@ -510,5 +510,5 @@ ntdone:	if (lpdwPIDs) HeapFree (GetProcessHeap(), 0, lpdwPIDs);
 
 double get_load_average (void)
 {
-	return (-1.0);
+        return (-1.0);
 }

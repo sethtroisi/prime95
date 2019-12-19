@@ -212,7 +212,7 @@ public:
   friend dd_real cosh(const dd_real &a);
   friend dd_real tanh(const dd_real &a);
   friend void sincosh(const dd_real &a, 
-		      dd_real &sinh_a, dd_real &cosh_a);
+                      dd_real &sinh_a, dd_real &cosh_a);
 
   /* Inverse Hyperbolic Functions */
   friend dd_real asinh(const dd_real &a);

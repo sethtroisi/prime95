@@ -7,9 +7,9 @@ const int MYWM_TRAYMESSAGE = WM_APP + 100;
 
 class CMainFrame : public CMDIFrameWnd
 {
-	DECLARE_DYNCREATE(CMainFrame)
+        DECLARE_DYNCREATE(CMainFrame)
 public:
-	CMainFrame();
+        CMainFrame();
 
 // Attributes
 public:
@@ -18,45 +18,45 @@ public:
 public:
 
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CMainFrame)
-	public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual void OnUpdateFrameTitle(BOOL bAddToTitle);
-	virtual BOOL DestroyWindow();
-	protected:
-	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
-	//}}AFX_VIRTUAL
-	afx_msg LRESULT OnPower( WPARAM, LPARAM );
-	afx_msg LRESULT OnTrayMessage( WPARAM, LPARAM );
-	LRESULT OnTaskBarCreated (WPARAM, LPARAM);
+        // ClassWizard generated virtual function overrides
+        //{{AFX_VIRTUAL(CMainFrame)
+        public:
+        virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+        virtual void OnUpdateFrameTitle(BOOL bAddToTitle);
+        virtual BOOL DestroyWindow();
+        protected:
+        virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+        //}}AFX_VIRTUAL
+        afx_msg LRESULT OnPower( WPARAM, LPARAM );
+        afx_msg LRESULT OnTrayMessage( WPARAM, LPARAM );
+        LRESULT OnTaskBarCreated (WPARAM, LPARAM);
 
 // Implementation
 public:
-	virtual ~CMainFrame();
+        virtual ~CMainFrame();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+        virtual void AssertValid() const;
+        virtual void Dump(CDumpContext& dc) const;
 #endif
 
-	CStatusBar  m_wndStatusBar;
+        CStatusBar  m_wndStatusBar;
 protected:  // control bar embedded members
 
 // Generated message map functions
 protected:
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	//{{AFX_MSG(CMainFrame)
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnEndSession(BOOL bEnding);
-	afx_msg void OnActivateApp(BOOL bActive, DWORD hTask);
-	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg void OnTrayOpenWindow();
-	afx_msg void OnStopContinue();
-	afx_msg void OnTile();
-	afx_msg void OnPosition();
-	afx_msg LRESULT OnServiceStop(WPARAM wParam, LPARAM lParam);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+        afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+        //{{AFX_MSG(CMainFrame)
+        afx_msg void OnSize(UINT nType, int cx, int cy);
+        afx_msg void OnEndSession(BOOL bEnding);
+        afx_msg void OnActivateApp(BOOL bActive, DWORD hTask);
+        afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
+        afx_msg void OnTrayOpenWindow();
+        afx_msg void OnStopContinue();
+        afx_msg void OnTile();
+        afx_msg void OnPosition();
+        afx_msg LRESULT OnServiceStop(WPARAM wParam, LPARAM lParam);
+        //}}AFX_MSG
+        DECLARE_MESSAGE_MAP()
 public:
 };
 

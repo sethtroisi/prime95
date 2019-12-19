@@ -10,14 +10,14 @@
 
 @interface PRPController : NSWindowController {
 
-	int	workerNumber;
-	int	workerNumberMax;
-	int	workerNumberEnabled;
-	double	k;
-	int	b;
-	int	n;
-	int	nMax;
-	int	c;
+        int     workerNumber;
+        int     workerNumberMax;
+        int     workerNumberEnabled;
+        double  k;
+        int     b;
+        int     n;
+        int     nMax;
+        int     c;
 }
 
 @property(readwrite, assign) int workerNumber;

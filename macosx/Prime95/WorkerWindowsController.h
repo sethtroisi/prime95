@@ -9,13 +9,13 @@
 #import <Cocoa/Cocoa.h>
 
 @interface WorkerWindowsController : NSWindowController {
-	int	numWorkers;
-	int	numWorkersMax;
-	int	numWorkersEnabled;
-	int	priority;
-	NSMutableArray *workerData;
-	IBOutlet NSArrayController *workerDataArrayController;
-	int	startupInProgress;
+        int     numWorkers;
+        int     numWorkersMax;
+        int     numWorkersEnabled;
+        int     priority;
+        NSMutableArray *workerData;
+        IBOutlet NSArrayController *workerDataArrayController;
+        int     startupInProgress;
 }
 
 @property(readwrite, assign) int numWorkers;
@@ -32,11 +32,11 @@
 
 @interface WorkerData : NSObject
 {
-	NSString *workerNumber;
-	int	typeOfWork;
-	int	multithreading;
-	int	multithreadingMax;
-	int	multithreadingEnabled;
+        NSString *workerNumber;
+        int     typeOfWork;
+        int     multithreading;
+        int     multithreadingMax;
+        int     multithreadingEnabled;
 }
 
 @property(copy) NSString *workerNumber;

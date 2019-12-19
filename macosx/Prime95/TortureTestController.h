@@ -9,27 +9,27 @@
 #import <Cocoa/Cocoa.h>
 
 @interface TortureTestController : NSWindowController {
-	int	tortureType;
-	int	numberOfThreads;
-	int	numberOfThreadsMin;
-	int	numberOfThreadsMax;
-	int	numberOfThreadsEnabled;
+        int     tortureType;
+        int     numberOfThreads;
+        int     numberOfThreadsMin;
+        int     numberOfThreadsMax;
+        int     numberOfThreadsEnabled;
         int     smallFFTsEnabled;
         int     mediumFFTsEnabled;
-	int	customSettingsEnabled;
-	int	customMemoryEnabled;
-	int	minFFTSize;
-	int	maxFFTSize;
-	int	runFFTsInPlace;
-	int	memoryToUse;
-	int	timeToRunEachFFT;
-	int	blendMemory;
-	int	disableAVX512;
-	int	disableFMA3;
-	int	disableAVX;
-	int	disableAVX512Enabled;
-	int	disableFMA3Enabled;
-	int	disableAVXEnabled;
+        int     customSettingsEnabled;
+        int     customMemoryEnabled;
+        int     minFFTSize;
+        int     maxFFTSize;
+        int     runFFTsInPlace;
+        int     memoryToUse;
+        int     timeToRunEachFFT;
+        int     blendMemory;
+        int     disableAVX512;
+        int     disableFMA3;
+        int     disableAVX;
+        int     disableAVX512Enabled;
+        int     disableFMA3Enabled;
+        int     disableAVXEnabled;
 }
 
 @property(readwrite, assign) int tortureType;

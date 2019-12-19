@@ -9,11 +9,11 @@
 #import <Cocoa/Cocoa.h>
 
 @interface TestController : NSWindowController {
-	int	workerNumber;
-	int	workerNumberMax;
-	int	workerNumberEnabled;
-	int	exponentToTest;
-	int	exponentToTestMax;
+        int     workerNumber;
+        int     workerNumberMax;
+        int     workerNumberEnabled;
+        int     exponentToTest;
+        int     exponentToTestMax;
 }
 
 @property(readwrite, assign) int workerNumber;

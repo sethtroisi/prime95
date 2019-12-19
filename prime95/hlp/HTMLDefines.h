@@ -89,9 +89,9 @@
 #define HID_HT_SIZE                             0x40010 // alias: ID_HT_BOTTOMLEFT
 #define HID_HT_SIZE                             0x40011 // alias: ID_HT_BOTTOMRIGHT
 #define HID_HT_SIZE                             0x40012 // alias: ID_HT_BORDER
-#define HID_HT_OBJECT							0x40013
-#define HID_HT_CLOSE							0x40014
-#define HID_HT_HELP								0x40015
+#define HID_HT_OBJECT                                                   0x40013
+#define HID_HT_CLOSE                                                    0x40014
+#define HID_HT_HELP                                                             0x40015
 
 // WM_SYSCOMMAND help IDs
 #define HID_SC_SIZE                             0x1EF00
@@ -322,7 +322,7 @@
 #define AFX_HIDP_SQL_ROW_FETCH                  0x3F296
 #define AFX_HIDP_SQL_INCORRECT_ODBC             0x3F297
 #define AFX_HIDP_SQL_UPDATE_DELETE_FAILED       0x3F298
-#define AFX_HIDP_SQL_DYNAMIC_CURSOR_NOT_SUPPORTED	0x3F299
+#define AFX_HIDP_SQL_DYNAMIC_CURSOR_NOT_SUPPORTED       0x3F299
 #define AFX_HIDP_SQL_FIELD_NOT_FOUND            0x3F29A
 #define AFX_HIDP_SQL_BOOKMARKS_NOT_SUPPORTED    0x3F29B
 #define AFX_HIDP_SQL_BOOKMARKS_NOT_ENABLED      0x3F29C

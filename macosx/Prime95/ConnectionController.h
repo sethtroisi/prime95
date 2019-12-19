@@ -9,14 +9,14 @@
 #import <Cocoa/Cocoa.h>
 
 @interface ConnectionController : NSWindowController {
-	NSString *hostName;
-	int	proxyEnabled;
-	int	portNumber;
-	NSString *userName;
-	NSString *password;
-	int	debug;
-	char	szProxyHost[120], szProxyUser[50], szProxyPassword[50];
-	unsigned short nProxyPort;
+        NSString *hostName;
+        int     proxyEnabled;
+        int     portNumber;
+        NSString *userName;
+        NSString *password;
+        int     debug;
+        char    szProxyHost[120], szProxyUser[50], szProxyPassword[50];
+        unsigned short nProxyPort;
 }
 
 @property(readwrite, retain) NSString *hostName;

@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface ManualCommunicationController : NSWindowController {
-	int	manualContact;
+        int     manualContact;
 }
 
 @property(readwrite, assign) int manualContact;

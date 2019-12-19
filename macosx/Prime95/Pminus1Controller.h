@@ -9,16 +9,16 @@
 #import <Cocoa/Cocoa.h>
 
 @interface Pminus1Controller : NSWindowController {
-	int	workerNumber;
-	int	workerNumberMax;
-	int	workerNumberEnabled;
-	double	k;
-	int	b;
-	int	n;
-	int	nMax;
-	int	c;
-	double	bound1;
-	double	bound2;
+        int     workerNumber;
+        int     workerNumberMax;
+        int     workerNumberEnabled;
+        double  k;
+        int     b;
+        int     n;
+        int     nMax;
+        int     c;
+        double  bound1;
+        double  bound2;
 }
 
 @property(readwrite, assign) int workerNumber;

@@ -31,14 +31,14 @@
 #include "resource.h"
 
 // Variables used to communicate with the main prime95 code
-char	NTSERVICENAME[32] = {0};	// name of the NT service
-HWND	MAINFRAME_HWND = 0;		// Handle of main frame window
-int	THREAD_ACTIVE = 0;		// TRUE if worker thread is active
+char    NTSERVICENAME[32] = {0};        // name of the NT service
+HWND    MAINFRAME_HWND = 0;             // Handle of main frame window
+int     THREAD_ACTIVE = 0;              // TRUE if worker thread is active
 
 
 // internal variables
-SERVICE_STATUS		ssStatus;       // current status of the service
-SERVICE_STATUS_HANDLE	sshStatusHandle;
+SERVICE_STATUS          ssStatus;       // current status of the service
+SERVICE_STATUS_HANDLE   sshStatusHandle;
 
 // internal function prototypes
 VOID WINAPI service_ctrl (DWORD dwCtrlCode);
@@ -58,28 +58,28 @@ int WinMainCRTStartup (void);
 
 int MyWinMainCRTStartup (void)
 {
-	SERVICE_TABLE_ENTRY dispatchTable[] = {
-		{ NTSERVICENAME, (LPSERVICE_MAIN_FUNCTION) service_main },
-		{ NULL, NULL }
-	};
-	STARTUPINFO sui;
+        SERVICE_TABLE_ENTRY dispatchTable[] = {
+                { NTSERVICENAME, (LPSERVICE_MAIN_FUNCTION) service_main },
+                { NULL, NULL }
+        };
+        STARTUPINFO sui;
 
 /* Is prime95 being run as an NT service or a normal program?  We determine */
 /* this by looking at the USESHOWWINDOW flag.  If set this is not an NT */
 /* service run.  Also, when started from an MS-DOS command prompt, the */
 /* flags are zero.  Just jump to the normal C runtime library startup code. */
 
-	GetStartupInfo (&sui);
-	if (sui.dwFlags == 0 || (sui.dwFlags & STARTF_USESHOWWINDOW)) {
-		return (WinMainCRTStartup ());
-	}
+        GetStartupInfo (&sui);
+        if (sui.dwFlags == 0 || (sui.dwFlags & STARTF_USESHOWWINDOW)) {
+                return (WinMainCRTStartup ());
+        }
 
 /* Start the service thread */
 
-	if (!StartServiceCtrlDispatcher (dispatchTable))
-		AddToMessageLog ("StartServiceCtrlDispatcher failed.");
+        if (!StartServiceCtrlDispatcher (dispatchTable))
+                AddToMessageLog ("StartServiceCtrlDispatcher failed.");
 
-	return (0);
+        return (0);
 }
 
 
@@ -105,37 +105,37 @@ void WINAPI service_main (DWORD dwArgc, LPTSTR *lpszArgv)
 // Copy the service name from the first lpszArgv
 // Prime95 will use this to determine the named_ini_files value
 
-	strcpy (NTSERVICENAME, lpszArgv[0]);
+        strcpy (NTSERVICENAME, lpszArgv[0]);
 
 // register our service control handler:
 
-	sshStatusHandle = RegisterServiceCtrlHandler (NTSERVICENAME, service_ctrl);
-	if (!sshStatusHandle) goto cleanup;
+        sshStatusHandle = RegisterServiceCtrlHandler (NTSERVICENAME, service_ctrl);
+        if (!sshStatusHandle) goto cleanup;
 
 // SERVICE_STATUS members that don't change in example
 
-	ssStatus.dwServiceType = SERVICE_INTERACTIVE_PROCESS | SERVICE_WIN32_OWN_PROCESS;
-	ssStatus.dwServiceSpecificExitCode = 0;
+        ssStatus.dwServiceType = SERVICE_INTERACTIVE_PROCESS | SERVICE_WIN32_OWN_PROCESS;
+        ssStatus.dwServiceSpecificExitCode = 0;
 
 // report the status to the service control manager.
 
-	if (! ReportStatusToSCMgr (
-			SERVICE_RUNNING,	// service state
-			NO_ERROR,		// code
-			0))			// wait hint
-		goto cleanup;
+        if (! ReportStatusToSCMgr (
+                        SERVICE_RUNNING,        // service state
+                        NO_ERROR,               // code
+                        0))                     // wait hint
+                goto cleanup;
 
 // Start the GUI service by calling the normal C runtime startup code
 
-	WinMainCRTStartup ();
-	return;
+        WinMainCRTStartup ();
+        return;
 
 // try to report the stopped status to the service control manager.
 
 cleanup:
-	if (sshStatusHandle)
-		(VOID) ReportStatusToSCMgr (SERVICE_STOPPED, 0, 0);
-	return;
+        if (sshStatusHandle)
+                (VOID) ReportStatusToSCMgr (SERVICE_STOPPED, 0, 0);
+        return;
 }
 
 
@@ -157,7 +157,7 @@ VOID WINAPI service_ctrl (DWORD dwCtrlCode)
 
 // Handle the requested control code.
 
-	switch (dwCtrlCode) {
+        switch (dwCtrlCode) {
 
 // Stop the service.
 // Note: Only the system can send SERVICE_CONTROL_SHUTDOWN to
@@ -174,30 +174,30 @@ VOID WINAPI service_ctrl (DWORD dwCtrlCode)
 // needs to shut down so that network connections are not made when the system
 // is in the shutdown state.
 
-	case SERVICE_CONTROL_SHUTDOWN:
-	case SERVICE_CONTROL_STOP:
-		ssStatus.dwCurrentState = SERVICE_STOP_PENDING;
-		ReportStatusToSCMgr (ssStatus.dwCurrentState, NO_ERROR, 0);
-		if (THREAD_ACTIVE) {
-			SendMessage (MAINFRAME_HWND, WM_COMMAND, IDM_STOP, 0);
-			while (THREAD_ACTIVE) Sleep (50);
-		}
-		SendMessage (MAINFRAME_HWND, USR_SERVICE_STOP, 0, 0);
-		ssStatus.dwCurrentState = SERVICE_STOPPED;
-		break;
+        case SERVICE_CONTROL_SHUTDOWN:
+        case SERVICE_CONTROL_STOP:
+                ssStatus.dwCurrentState = SERVICE_STOP_PENDING;
+                ReportStatusToSCMgr (ssStatus.dwCurrentState, NO_ERROR, 0);
+                if (THREAD_ACTIVE) {
+                        SendMessage (MAINFRAME_HWND, WM_COMMAND, IDM_STOP, 0);
+                        while (THREAD_ACTIVE) Sleep (50);
+                }
+                SendMessage (MAINFRAME_HWND, USR_SERVICE_STOP, 0, 0);
+                ssStatus.dwCurrentState = SERVICE_STOPPED;
+                break;
 
 // Update the service status.
 
-	case SERVICE_CONTROL_INTERROGATE:
-		break;
+        case SERVICE_CONTROL_INTERROGATE:
+                break;
 
 // invalid control code
 
-	default:
-		break;
-	}
+        default:
+                break;
+        }
 
-	ReportStatusToSCMgr (ssStatus.dwCurrentState, NO_ERROR, 0);
+        ReportStatusToSCMgr (ssStatus.dwCurrentState, NO_ERROR, 0);
 }
 
 
@@ -218,36 +218,36 @@ VOID WINAPI service_ctrl (DWORD dwCtrlCode)
 //  COMMENTS:
 //
 BOOL ReportStatusToSCMgr (
-	DWORD	dwCurrentState,
-	DWORD	dwWin32ExitCode,
-	DWORD	dwWaitHint)
+        DWORD   dwCurrentState,
+        DWORD   dwWin32ExitCode,
+        DWORD   dwWaitHint)
 {
-static	DWORD	dwCheckPoint = 1;
-	BOOL	fResult = TRUE;
+static  DWORD   dwCheckPoint = 1;
+        BOOL    fResult = TRUE;
 
-	if (dwCurrentState == SERVICE_START_PENDING)
-		ssStatus.dwControlsAccepted = 0;
-	else
-		ssStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP |
-					      SERVICE_ACCEPT_SHUTDOWN;
+        if (dwCurrentState == SERVICE_START_PENDING)
+                ssStatus.dwControlsAccepted = 0;
+        else
+                ssStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP |
+                                              SERVICE_ACCEPT_SHUTDOWN;
 
-	ssStatus.dwCurrentState = dwCurrentState;
-	ssStatus.dwWin32ExitCode = dwWin32ExitCode;
-	ssStatus.dwWaitHint = dwWaitHint;
+        ssStatus.dwCurrentState = dwCurrentState;
+        ssStatus.dwWin32ExitCode = dwWin32ExitCode;
+        ssStatus.dwWaitHint = dwWaitHint;
 
-	if (dwCurrentState == SERVICE_RUNNING ||
-	    dwCurrentState == SERVICE_STOPPED)
-		ssStatus.dwCheckPoint = 0;
-	else
-		ssStatus.dwCheckPoint = dwCheckPoint++;
+        if (dwCurrentState == SERVICE_RUNNING ||
+            dwCurrentState == SERVICE_STOPPED)
+                ssStatus.dwCheckPoint = 0;
+        else
+                ssStatus.dwCheckPoint = dwCheckPoint++;
 
 // Report the status of the service to the service control manager.
 
-	if (!(fResult = SetServiceStatus (sshStatusHandle, &ssStatus))) {
-		AddToMessageLog ("SetServiceStatus");
-	}
+        if (!(fResult = SetServiceStatus (sshStatusHandle, &ssStatus))) {
+                AddToMessageLog ("SetServiceStatus");
+        }
 
-	return fResult;
+        return fResult;
 }
 
 
@@ -266,32 +266,32 @@ static	DWORD	dwCheckPoint = 1;
 //
 VOID AddToMessageLog (LPTSTR lpszMsg)
 {
-	TCHAR	szMsg[256];
-	HANDLE	hEventSource;
-	LPTSTR	lpszStrings[2];
-	DWORD	dwErr;
+        TCHAR   szMsg[256];
+        HANDLE  hEventSource;
+        LPTSTR  lpszStrings[2];
+        DWORD   dwErr;
 
-	dwErr = GetLastError();
+        dwErr = GetLastError();
 
 // Use event logging to log the error.
 
-	hEventSource = RegisterEventSource (NULL, NTSERVICENAME);
+        hEventSource = RegisterEventSource (NULL, NTSERVICENAME);
 
-	_stprintf (szMsg, "%s error: %d", NTSERVICENAME, dwErr);
-	lpszStrings[0] = szMsg;
-	lpszStrings[1] = lpszMsg;
+        _stprintf (szMsg, "%s error: %d", NTSERVICENAME, dwErr);
+        lpszStrings[0] = szMsg;
+        lpszStrings[1] = lpszMsg;
 
-	if (hEventSource != NULL) {
-		ReportEvent (
-			hEventSource,		// handle of event source
-			EVENTLOG_ERROR_TYPE,	// event type
-			0,			// event category
-			0,			// event ID
-			NULL,			// current user's SID
-			2,			// strings in lpszStrings
-			0,			// no bytes of raw data
-			lpszStrings,		// array of error strings
-			NULL);			// no raw data
-		(VOID) DeregisterEventSource (hEventSource);
-	}
+        if (hEventSource != NULL) {
+                ReportEvent (
+                        hEventSource,           // handle of event source
+                        EVENTLOG_ERROR_TYPE,    // event type
+                        0,                      // event category
+                        0,                      // event ID
+                        NULL,                   // current user's SID
+                        2,                      // strings in lpszStrings
+                        0,                      // no bytes of raw data
+                        lpszStrings,            // array of error strings
+                        NULL);                  // no raw data
+                (VOID) DeregisterEventSource (hEventSource);
+        }
 }

@@ -18,9 +18,9 @@ extern "C" {
 /* Align a pointer to the given boundary (boundary must be a power of 2) */
 
 #ifdef _WIN64
-#define align_ptr(p,n)	(void *) (((uint64_t)(p) + (n)-1) & ~((n)-1))
+#define align_ptr(p,n)  (void *) (((uint64_t)(p) + (n)-1) & ~((n)-1))
 #else
-#define align_ptr(p,n)	(void *) (((long)(p) + (n)-1) & ~((n)-1))
+#define align_ptr(p,n)  (void *) (((long)(p) + (n)-1) & ~((n)-1))
 #endif
 
 /* Aligned malloc routines.  MSVC 8 supports these in the C runtime library. */

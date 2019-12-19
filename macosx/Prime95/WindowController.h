@@ -10,8 +10,8 @@
 
 
 @interface WindowController : NSWindowController {
-	IBOutlet NSTextView *textView;
-	NSString *baseTitle;
+        IBOutlet NSTextView *textView;
+        NSString *baseTitle;
 }
 
 - (void)setFontSize:(int)newSize;
