@@ -3777,7 +3777,7 @@ void pm1_save (
 
 /* Write the file header */
 
-        if (!write_header (fd, PM1_MAGICNUM, PM1_VERSION, w)) goto writeerr;
+        if (! write_header (fd, PM1_MAGICNUM, PM1_VERSION, w)) goto writeerr;
 
 /* Write the file data */
 

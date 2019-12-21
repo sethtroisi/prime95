@@ -193,6 +193,8 @@ void rangeStatusMessage (
                 sprintf (buf+strlen(buf), STAT1, ll_and_prp_cnt, mersennes ? "Mersenne " : "", (long long) (1.0 / prob));
 }
 
+
+
 /* Return the suggested minimum number of cores that should be used for a work preference. */
 /* Used in the Worker Windows dialog box. */
 
@@ -221,3 +223,235 @@ int min_cores_for_work_pref (
 
         return (cores);
 }
+
+
+/**********CLEANUP******************/
+/* TODO make opendir & readdir generics for mac/windows */
+
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+/**********CLEANUP******************/
+
+
+/* Create a status report message about Backup/Restore files in working directory */
+
+#define BACKUP_NONE         "No Backup/Restore files (*.bu) were found in %s.\n"
+#define BACKUP_CWD_ERROR    "Unable to read working directory (%s).\n"
+#define BACKUP_PARSE_ERROR  "Unable to parse (%s).\n"
+
+void restoreStatusMessage (
+        char    *buf,
+        unsigned int buflen)            /* Originally coded for a 1000 character buffer */
+{
+        unsigned int ll_and_prp_cnt, ecm_and_pm1_cnt;
+        char    *orig_buf;
+
+/* TODO augment by checking how many of these are mentioned in worktodo. */
+
+/* Init.  Default is 16 lines in a 1000 character buffer */
+        orig_buf = buf;
+
+/* TODO add ll_and_prp_cnt and ecm_and_pm1_cnt */
+/* TODO get wDir name so it can be added to status message */
+
+// #include <unistd.h>
+//    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+//      printf("Current working dir: %s\n", cwd);
+
+        struct dirent *dp;
+        DIR *dfd;
+        if ((dfd = opendir(".") == NULL)
+        {
+                sprintf(buf, BACKUP_CWD_ERROR, "TODO");
+                buf += strlen(buf);
+                return (FALSE);
+        }
+
+        char filename_qfd[100] ;
+        while ((dp = readdir(dfd)) != NULL)
+        {
+                sprintf( filename_qfd , "%s",dir,dp->d_name) ;
+                if( dp->d_type != DT_REG )
+                {
+                        continue ;
+                }
+
+                char *ext = strrchr(dp->d_name, '.');
+                if (ext && strcmp(ext, ".bu")) {
+                        // Load File Status
+                        struct work_unit *w;
+                        if (!restoreStatus(dp->d_name, work_unit))
+                        {
+                                snprintf(buf, buflen, BACKUP_PARSE_ERROR, dp->d_name);
+                                buflen -= strlen(buf);
+                                buf += strlen(buf);
+                        }
+                }
+        }
+}
+
+int restoreFileStatusMessage (
+        char    *filename,
+        struct work_unit *w)
+{
+        int        fd;
+        unsigned long file_magicnum;
+        unsigned long version;
+        double  k;
+        unsigned long b, n;
+        long    c;
+        char    pad;
+        char    stage[11];
+        double  pct_complete;
+        unsigned long tmp;
+
+// See pct_complete_from_savefile
+// readLLSaveFile
+// read_header
+// ecm_restore
+// pm1_restore
+
+        fd = _open (filename, _O_BINARY | _O_RDONLY);
+        if (fd <= 0) return (FALSE);
+
+/* Load the file magicnum */
+
+        // read_magicnum & read_header don't return the read values.
+        // reusing portions of that code here.
+
+        _lseek(fd, 0, SEEK_SET);
+        if (!read_long (fd, &file_magicnum, NULL)) return (FALSE);
+
+/* Load the rest of the common file header */
+        if (!read_long (fd, version, NULL)) return (FALSE);
+
+        if (!read_double (fd, &k, NULL)) return (FALSE);
+        if (!read_long (fd, &b, NULL)) return (FALSE);
+        if (!read_long (fd, &n, NULL)) return (FALSE);
+        if (!read_slong (fd, &c, NULL)) return (FALSE);
+
+/* Update workunit fields */
+
+        w->k = k;
+        w->b = b;
+        w->n = n;
+        w->c = c;
+
+/* Can read_header to validate and set other fields */
+
+        if (!read_header(fd, &trash, w, NULL)) return (FALSE);
+
+        switch (file_magicnum) {
+        case: ECM_MAGICNUM
+                w->work_type =  WORK_ECM;
+                if (version != ECM_VERSION) return (FALSE);
+                if (! read_long (fd, &tmp, NULL)) goto readerr;
+                // TODO Where to write stage???
+                //*stage = (int) tmp; 
+                if (! read_long (fd, w->curve, &sum)) goto readerr;
+                if (! read_long (fd, w->curve, &sum)) goto readerr;
+
+
+                break;
+        case: PM1_MAGICNUM
+                w->work_type =  WORK_PMINUS1;
+                if (version != PM1_VERSION) return (FALSE);
+                break;
+        case: LL_MAGICNUM
+                w->work_type =  WORK_TEST;
+                if (version != LL_VERSION) return (FALSE);
+                break;
+        case: PRP_MAGICNUM
+                w->work_type =  WORK_PRP;
+                if (version != PRP_VERSION) return (FALSE);
+                break;
+        case: FACTOR_MAGICNUM
+                w->work_type =  WORK_FACTOR;
+                if(version != FACTOR_MAGICNUM) return (FALSE);
+                break;
+        default:
+            return (FALSE);
+        }
+
+/* Return success */
+        return (TRUE);
+
+}
+
+
+
+        if (!read_magicnum (fd, PRP_MAGICNUM)) goto err;
+        if (!read_header (fd, &version, w, &filesum)) goto err;
+        if (version == 0 || version > PRP_VERSION) goto err;
+
+
+
+        if (! read_magicnum (fd, PM1_MAGICNUM)) goto readerr;
+        if (! read_header (fd, &version, w, &filesum)) goto readerr;
+        if (version != 1 && version != 2) goto readerr;
+
+/* Read the file data */
+
+        if (! read_long (fd, &pm1data->stage, &sum)) goto readerr;
+        if (! read_longlong (fd, &pm1data->B_done, &sum)) goto readerr;
+        if (! read_longlong (fd, &pm1data->B, &sum)) goto readerr;
+        if (! read_longlong (fd, &pm1data->C_done, &sum)) goto readerr;
+        if (! read_longlong (fd, &pm1data->C_start, &sum)) goto readerr;
+        if (! read_longlong (fd, &pm1data->C, &sum)) goto readerr;
+        if (! read_longlong (fd, processed, &sum)) goto readerr;
+        if (! read_long (fd, &pm1data->D, &sum)) goto readerr;
+        if (! read_long (fd, &pm1data->E, &sum)) goto readerr;
+        if (! read_long (fd, &pm1data->rels_done, &sum)) goto readerr;
+        if (! read_long (fd, &pm1data->bitarray_len, &sum)) goto readerr;
+
+
+        if ((unsigned int) (buf - orig_buf) >= buflen - 200 ||
+            lines_output >= lines_per_worker-1) {
+                if (! truncated_status_msg) {
+                        strcpy (buf, "More...\n");
+                        buf += strlen (buf);
+                        truncated_status_msg = TRUE;
+                }
+                continue;
+        }
+
+        if (ll_and_prp_cnt == 1)
+                sprintf (buf+strlen(buf), STAT1a, mersennes ? "Mersenne " : "", (long long) (1.0 / prob));
+        if (ll_and_prp_cnt > 1)
+                sprintf (buf+strlen(buf), STAT1, ll_and_prp_cnt, mersennes ? "Mersenne " : "", (long long) (1.0 / prob));
+}
+
+
+
+
+
+/* Return the suggested minimum number of cores that should be used for a work preference. */
+/* Used in the Worker Windows dialog box. */
+
+int min_cores_for_work_pref (
+        int     work_pref)
+{
+        int     cores;
+
+// Default minimum number of cores is 1.
+
+        cores = 1;
+
+// If LL or PRP testing 100M digit numbers, use at least 4 cores (or all cores)
+
+        if (work_pref == PRIMENET_WP_LL_100M || work_pref == PRIMENET_WP_PRP_100M) {
+                if (NUM_CPUS < 8) cores = NUM_CPUS;
+                else cores = 4;
+        }
+
+// If we aren't using the computer 24 hours a day, then scale the minimum number of cores up
+
+        cores = cores * 24 / CPU_HOURS;
+        if (cores > (int) NUM_CPUS) cores = NUM_CPUS;
+
+// Return the minimum number of cores
+
+        return (cores);
+}
+
