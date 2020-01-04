@@ -3547,50 +3547,6 @@ print out each test case (all relevant data)*/
 #define PM1_STAGE2      1       /* In stage 2 */
 #define PM1_DONE        2       /* P-1 job complete */
 
-typedef struct {
-        gwhandle gwdata;        /* GWNUM handle */
-        int     thread_num;     /* Worker thread number */
-        unsigned long stage;    /* One of the 4 states listed above */
-        unsigned long D;        /* Stage 2 loop size */
-        unsigned long E;        /* Suyama's power in stage 2 */
-        gwnum   *nQx;           /* Array of data used in stage 2 */
-        gwnum   *eQx;           /* Array of data used in stage 2 of P-1 */
-        void    *sieve_info;    /* Prime number sieve */
-        uint64_t B_done;        /* We have completed calculating 3^e */
-                                /* to this bound #1 */
-        uint64_t B;             /* We are trying to increase bound #1 */
-                                /* to this value */
-        uint64_t C_done;        /* Bound #2 has been computed to this value */
-        uint64_t C_start;       /* We are trying to increase bound #2 */
-                                /* from this starting point.  This is the */
-                                /* same as C_done except when using the */
-                                /* untested worktodo feature that allows */
-                                /* doing part of stage 2 on several machines */
-        uint64_t C;             /* We are advancing bound #2 to this */
-                                /* value using the bit array.  Large B2 */
-                                /* values require us to break the bit */
-                                /* array into more than one chunk */
-        unsigned long numrels;  /* Number of values relatively prime to D */
-        unsigned long rels_done;/* In multi-pass processing of the bit */
-                                /* array, the number of relative primes */
-                                /* already processed */
-        unsigned long rels_this_pass;
-                                /* In multi-pass processing of the bit */
-                                /* array, the number of relative primes we */
-                                /* are processing this pass. */
-        char    *bitarray;      /* Bit array for primes between */
-                                /* bitarray_first_number and C */
-        unsigned long bitarray_len;
-                                /* Number of bytes in the bit array */
-        uint64_t bitarray_first_number; /* The number corresponding to the */
-                                /* first bit in the bit array. */
-        unsigned long pairs_set;/* Number of pairs originally set in */
-                                /* bitarray */
-        unsigned long pairs_done;/* Number of pairs completed */
-        double  pct_mem_to_use; /* If we get memory allocation errors, we */
-                                /* progressively try using less and less. */
-} pm1handle;
-
 /* Perform cleanup functions. */
 
 void pm1_cleanup (
