@@ -205,6 +205,7 @@ void rangeStatusMessage (
 
 /* Create a status report message about Backup/Restore files in working directory */
 
+#define BACKUP_STATUS       "Backup %-15s | %s.\n"
 #define BACKUP_NONE         "No Backup/Restore files (*.bu) were found in %s.\n"
 #define BACKUP_CWD_ERROR    "Unable to read working directory (%s).\n"
 #define BACKUP_PARSE_ERROR  "Unable to parse (%s).\n"
@@ -260,8 +261,7 @@ int restoreWorkUnitFromFile (
                 // duplicated from ecm.c ecm_restore (minus reading data)
                 w->work_type =  WORK_ECM;
 
-                if (! read_long (fd, &tmp, NULL)) goto readerr;
-                w->stage[0] = (char) tmp;
+                if (! read_long (fd, &pm1->stage, NULL)) goto readerr;
                 if (! read_long (fd, &tmp, NULL)) goto readerr;
                 w->curves_to_do = (int) tmp;
                 if (! read_double (fd, &w->curve, NULL)) goto readerr;
@@ -332,35 +332,6 @@ readerr:
         return (FALSE);
 }
 
-
-/*
-        if (!read_magicnum (fd, PRP_MAGICNUM)) goto err;
-        if (!read_header (fd, &version, w, &filesum)) goto err;
-        if (version == 0 || version > PRP_VERSION) goto err;
-
-
-
-        if (! read_magicnum (fd, PM1_MAGICNUM)) return (FALSE);
-        if (! read_header (fd, &version, w, &filesum)) return (FALSE);
-
-
-        if ((unsigned int) (buf - orig_buf) >= buflen - 200 ||
-            lines_output >= lines_per_worker-1) {
-                if (! truncated_status_msg) {
-                        strcpy (buf, "More...\n");
-                        buf += strlen (buf);
-                        truncated_status_msg = TRUE;
-                }
-                continue;
-        }
-
-        if (ll_and_prp_cnt == 1)
-                sprintf (buf+strlen(buf), STAT1a, mersennes ? "Mersenne " : "", (long long) (1.0 / prob));
-        if (ll_and_prp_cnt > 1)
-                sprintf (buf+strlen(buf), STAT1, ll_and_prp_cnt, mersennes ? "Mersenne " : "", (long long) (1.0 / prob));
-}
-*/
-
 void restoreStatusMessage (
         char    *buf,
         unsigned int buflen)            /* Originally coded for a 1000 character buffer */
@@ -400,7 +371,8 @@ void restoreStatusMessage (
                 }
 
                 char *ext = strrchr(dp->d_name, '.');
-                if (ext && strcmp(ext, ".bu")) {
+                if (ext && (strcmp(ext, ".bu") == 0))
+                {
                         // Load File into work_unit.
                         struct work_unit w;
                         pm1handle pm1;
@@ -411,7 +383,50 @@ void restoreStatusMessage (
                                 buf += strlen(buf);
                         } else {
 /* Process workunit and pm1 data into a status message */
+                                char status[1001];
+                                int free_len = 1000;
 
+// TODO why is K a float???
+                                free_len -= snprintf(status, free_len, "%.0f*%ld^%ld+%ld ", w.k, w.b, w.n, w.c);
+                                switch (w.work_type) {
+                                case WORK_ECM:
+                                        free_len -= snprintf(status, free_len, " ECM | %.1f | Curve %d | Stage %ld",
+                                            100 * w.pct_complete, w.curves_to_do, pm1.stage + 1);
+                                        //if (! read_longlong (fd, &pm1->B, NULL)) goto readerr;
+                                        //if (! read_longlong (fd, &pm1->B_done, NULL)) goto readerr;
+                                        //if (! read_longlong (fd, &pm1->C_done, NULL)) goto readerr;
+                                        break;
+                                case WORK_PMINUS1:
+                                        free_len -= snprintf(status, free_len, " P-1 | %.1f | Stage %ld | %ld/%ld, %ld/%ld",
+                                            100 * w.pct_complete, pm1.stage, pm1.B_done, pm1.B, pm1.C_done, pm1.C);
+                                        //if (! read_longlong (fd, &pm1->C_start, NULL)) goto readerr;
+                                        //if (! read_longlong (fd, &pm1->C, NULL)) goto readerr;
+                                        ///* "processed" stored in bitarray_first_number */
+                                        //if (! read_longlong (fd, &pm1->bitarray_first_number, NULL)) goto readerr;
+                                        //if (! read_longlong (fd, &pm1->D, NULL)) goto readerr;
+                                        //if (! read_longlong (fd, &pm1->E, NULL)) goto readerr;
+                                        //if (! read_longlong (fd, &pm1->rels_done, NULL)) goto readerr;
+                                        break;
+                                case WORK_TEST: // LL
+                                        // Store data in pm1 as llhandle doesn't have two of the fields.
+                                        // error_count is stored in E,
+                                        // count (iterations) is stored in C,
+                                        // units_bit (shift count) is stored in D.
+                                        //if (! read_longlong (fd, &pm1->E, NULL)) goto readerr;
+                                        //if (! read_longlong (fd, &pm1->C, NULL)) goto readerr;
+                                        //if (! read_longlong (fd, &pm1->D, NULL)) goto readerr;
+                                        break;
+                                case WORK_PRP:
+                                        break;
+                                case WORK_FACTOR:
+                                        break;
+                                default:
+                                        break;
+                                }
+
+                                snprintf(buf, buflen, BACKUP_STATUS, dp->d_name, status);
+                                buflen -= strlen(buf);
+                                buf += strlen(buf);
                         }
                 }
         }
@@ -445,4 +460,3 @@ int min_cores_for_work_pref (
 
         return (cores);
 }
-

@@ -26,9 +26,11 @@ CFLAGS = -I.. -I../gwnum -I/usr/local/include -DX86_64 -Wno-unused-result -O2
 CPP = g++
 CPPFLAGS = -I.. -I../gwnum -DX86_64 -O2
 
-LFLAGS = -Wl,-M -Wl,-L/usr/local/lib
+#LFLAGS = -Wl,-M -Wl,-L/usr/local/lib
+LFLAGS = -Wl,-L/usr/local/lib
 #LIBS = ../gwnum/gwnum.a ../gwnum/gwnum.ld -lm -lpthread -Wl,-Bstatic -lhwloc -Wl,-Bstatic -lcurl -Wl,-Bdynamic -lrt -lstdc++ -lz -lxml2 -ldl -lgmp
-LIBS = ../gwnum/gwnum.a ../gwnum/gwnum.ld -lm -lpthread -Wl,-Bstatic -lhwloc -Wl,-Bstatic -lcurl -Wl,-Bdynamic -lrt -lstdc++ -ldl -lgmp
+#LIBS = ../gwnum/gwnum.a ../gwnum/gwnum.ld -lm -lpthread -Wl,-Bstatic -lhwloc -Wl,-Bstatic -lcurl -Wl,-Bdynamic -lrt -lstdc++ -ldl -lgmp
+LIBS = ../gwnum/gwnum.a ../gwnum/gwnum.ld -lm -lpthread -lhwloc -lcurl -Wl,-Bdynamic -lrt -lstdc++ -ldl -lgmp
 
 FACTOROBJ = factor64.o
 LINUXOBJS = prime.o menu.o

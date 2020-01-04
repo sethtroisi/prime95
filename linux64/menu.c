@@ -572,13 +572,24 @@ again:  if (max_num_workers () > 1)
                 STARTUP_IN_PROGRESS = 0;
 }
 
-/* Output a status report for the range */
+/* Output a status report for the work-to-do file */
 
 void test_status (void)
 {
         char    buf[4000];
 
         rangeStatusMessage (buf, sizeof (buf));
+        strcat (buf, "\n");
+        outputLongLine (buf);
+}
+
+/* Output a report for all backup/restore files in CWD  */
+
+void restore_file_status (void)
+{
+        char    buf[10000];
+/* TODO should it be sizeof (buf) - 1? */
+        restoreStatusMessage (buf, sizeof (buf));
         strcat (buf, "\n");
         outputLongLine (buf);
 }
@@ -1293,6 +1304,9 @@ void main_menu (void)
 
         case 3:
                 test_status ();
+                printf ("\n---------- Restore Status ----------\n");
+                restore_file_status ();
+                printf ("\n---------- Restore Status ----------\n");
                 askOK ();
                 break;
 
