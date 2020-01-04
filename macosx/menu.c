@@ -339,7 +339,7 @@ void test_primenet (void)
         } else {
                 m_proxy_host[0] = 0;
         }
- 
+
         askNum ("Output debug info to prime.log (0=none, 1=some, 2=lots)", &m_debug, 0, 2);
 
 done:   if (askOkCancel ()) {
@@ -1198,7 +1198,7 @@ void test_welcome (void)
 /* Set global flag indicating startup is in progress.  This will delay */
 /* starting any communication with the server until the user has confirmed */
 /* he wants to use primenet and he has selected his work preferences. */
-        
+
         STARTUP_IN_PROGRESS = 1;
 
         outputLongLine ("\nWelcome to GIMPS, the hunt for huge prime numbers.  You will be asked a few simple questions and then the program will contact the primenet server to get some work for your computer.  Good luck!\n");
@@ -1237,7 +1237,7 @@ void main_menu (void)
         unsigned long choice;
 
         if (setjmp (MENU_JMPBUF)) return;               // Exit menus if a signal received while in the menus
-        
+
         for ( ; ; ) {
 
         printf ("\t     Main Menu\n");

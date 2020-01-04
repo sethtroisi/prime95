@@ -1,7 +1,7 @@
 /*
  * Primenet communication routines for all operating systems
  * Uses sockets and HTTP
- */ 
+ */
 
 /*
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
@@ -16,7 +16,7 @@
 //  PURPOSE:  Implements PrimeNet Version 4 and 5 API as HTTP network client
 //
 //  AUTHOR:   Peter Hunter, on the basis of work by Scott Kurowski (v3 API)
-//            Michiel van Loon, OS/2 adaptations 
+//            Michiel van Loon, OS/2 adaptations
 //            Kurowski 5/1998, 4.0 API support for MPrime 16.x
 //            Kurowski 9/1999, 4.0 API changes for MPrime 19.x
 //            Woltman 1/2002, Windows support and bug fixes
@@ -84,7 +84,7 @@ static const char szFILE[] = "/v5server/?";             /* HTTP GET string */
 int inet_aton (char *cp, struct in_addr *inp)
 {
         u_long temp;
- 
+
         temp = inet_addr(cp);
         if (temp == -1) return (0);
         inp->s_addr = temp;
@@ -290,7 +290,7 @@ int pnHttpServer (char *pbuf, unsigned cbuf, char* postargs)
 
         debug = IniSectionGetInt (INI_FILE, iniSection, "Debug", 0);
         url_format = IniSectionGetInt (INI_FILE, iniSection, "UseFullURL", 2);
- 
+
 /* Use MersenneIP setting so that SeventeenOrBust can use the */
 /* UseCurl=0 option. */
 
@@ -661,7 +661,7 @@ int pnHttpServerCURL (char *pbuf, unsigned cbuf, char* postargs)
 /* Get debug logging flag */
 
         debug = IniSectionGetInt (INI_FILE, iniSection, "Debug", 0);
- 
+
 /* Loop to try with proxy, then after a failure without proxy.  Ixfd64 requested this */
 /* feature here:  https://www.mersenneforum.org/showpost.php?p=505557&postcount=415 */
 
@@ -777,7 +777,7 @@ char *armor (char *d, char *s)
 /* & is token delimiter, '+' is space char */
 
         while (*s) {
-                if (strchr (ARMOR_CHARS, *s)) { 
+                if (strchr (ARMOR_CHARS, *s)) {
                         *d++ = '%';     /* convert chars to %nn hex codes */
                         *d++ = hx[(*s) / 16];
                         *d++ = hx[(*s) % 16];
@@ -1296,7 +1296,7 @@ void parse_double (
         *result = atof (buf);
 //bug -raise error if not number
 }
-        
+
 
 
 /*
@@ -1324,7 +1324,7 @@ int parse_page (char *response_buf, short operation, void *pkt)
                 if (strstr (s, "execution time") != NULL &&
                     strstr (s, "exceeded") != NULL)
                         return (PRIMENET_ERROR_SERVER_BUSY);
-                        
+
                 return (PRIMENET_ERROR_PNERRORRESULT);
         }
         if (!parse_multiline_string (s, "pnErrorDetail", errtxt, sizeof (errtxt))) {
@@ -1398,7 +1398,7 @@ int parse_page (char *response_buf, short operation, void *pkt)
                 }
 
 /* Print out the error code, text, and details */
-                
+
                 sprintf (buf, "PrimeNet error %d: %s\n", res, resmsg);
                 LogMsg (buf);
                 sprintf (buf, "%s\n", errtxt);

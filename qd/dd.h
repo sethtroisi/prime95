@@ -9,14 +9,14 @@
  *
  * Double-double precision (>= 106-bit significand) floating point
  * arithmetic package based on David Bailey's Fortran-90 double-double
- * package, with some changes. See  
+ * package, with some changes. See
  *
  *   http://www.nersc.gov/~dhbailey/mpdist/mpdist.html
- *   
+ *
  * for the original Fortran-90 version.
  *
  * Overall structure is similar to that of Keith Brigg's C++ double-double
- * package.  See  
+ * package.  See
  *
  *   http://www-epidem.plansci.cam.ac.uk/~kbriggs/doubledouble.html
  *
@@ -37,7 +37,7 @@ using namespace std;
 class dd_real {
 protected:
   double hi, lo;
-  
+
   /* Computes  dd * d  where d is known to be a power of 2. */
   friend dd_real mul_pwr2(const dd_real &dd, double d);
 
@@ -115,7 +115,7 @@ public:
   friend dd_real operator/(const dd_real &a, const dd_real &b);
   static dd_real div(double a, double b);
   friend dd_real inv(const dd_real &a);
-  
+
   /* Self-Division */
   dd_real &operator/=(double a);
   dd_real &operator/=(const dd_real &a);
@@ -138,7 +138,7 @@ public:
   static dd_real sqrt(double a);
   friend dd_real sqrt(const dd_real &a);
   friend dd_real nroot(const dd_real &a, int n);
-  
+
   /* Comparisons */
   friend bool operator==(const dd_real &a, double b);
   friend bool operator==(double a, const dd_real &b);
@@ -164,7 +164,7 @@ public:
   friend bool operator!=(double a, const dd_real &b);
   friend bool operator!=(const dd_real &a, const dd_real &b);
 
-  /* Other Comparisons.  These are faster than 
+  /* Other Comparisons.  These are faster than
      directly comparing to 0 or 1.             */
   bool is_zero() const;
   bool is_one() const;
@@ -211,7 +211,7 @@ public:
   friend dd_real sinh(const dd_real &a);
   friend dd_real cosh(const dd_real &a);
   friend dd_real tanh(const dd_real &a);
-  friend void sincosh(const dd_real &a, 
+  friend void sincosh(const dd_real &a,
                       dd_real &sinh_a, dd_real &cosh_a);
 
   /* Inverse Hyperbolic Functions */
@@ -231,7 +231,7 @@ public:
   friend ostream& operator<<(ostream &s, const dd_real &a);
   friend istream& operator>>(istream &s, dd_real &a);
 #endif
-  
+
   /* Debugging Methods */
   void dump() const;
   void dump_bits() const;

@@ -2,7 +2,7 @@
 | gwcommon.h
 |
 | This file contains handy #defines that I use in all my projects
-| 
+|
 |  Copyright 2005-2016 Mersenne Research, Inc.  All rights reserved.
 +---------------------------------------------------------------------*/
 

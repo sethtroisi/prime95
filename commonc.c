@@ -359,8 +359,8 @@ void getCpuSpeed (void)
 void getCpuInfo (void)
 {
         int     depth, i, temp;
-                        
-/* Get the CPU info using CPUID instruction */  
+
+/* Get the CPU info using CPUID instruction */
 
         guessCpuType ();
 
@@ -518,7 +518,7 @@ void getCpuInfo (void)
 
 /* Let the user override the CPUID brand string.  It should never be necessary. */
 /* However, one Athlon owner's brand string became corrupted with illegal characters. */
-        
+
         IniGetString (LOCALINI_FILE, "CpuBrand", CPU_BRAND, sizeof(CPU_BRAND), CPU_BRAND);
 
 /* Allow overriding the hwloc's generated values for number of physical processors, hyperthreads, and NUMA nodes. */
@@ -601,7 +601,7 @@ void getCpuDescription (
         if (CPU_NUM_L1_CACHES <= 0) strcat (buf, "unknown");
         if (CPU_NUM_L1_CACHES > 1) sprintf (buf + strlen (buf), "%dx", CPU_NUM_L1_CACHES);
         if (CPU_NUM_L1_CACHES >= 1) sprintf (buf + strlen (buf), "%d KB", CPU_TOTAL_L1_CACHE_SIZE / CPU_NUM_L1_CACHES);
-        
+
         strcat (buf, ", L2 cache size: ");
         if (CPU_NUM_L2_CACHES <= 0) strcat (buf, "unknown");
         if (CPU_NUM_L2_CACHES > 1) sprintf (buf + strlen (buf), "%dx", CPU_NUM_L2_CACHES);
@@ -742,7 +742,7 @@ void fill_sieve (
 /* In both cases, reset the sieve to start returning primes at the specified point. */
 
 int start_sieve (
-        int     thread_num,      
+        int     thread_num,
         uint64_t start,
         void    **si_to_recycle_or_returned_new_si)     /* Recycled or returned sieving structure */
 {
@@ -751,7 +751,7 @@ int start_sieve (
 }
 
 int start_sieve_with_limit (
-        int     thread_num,      
+        int     thread_num,
         uint64_t start,                                 /* Starting point for the sieve */
         uint32_t max_elimination_factor,                /* Sieve eliminates composites with any factors less than this number */
         void    **si_to_recycle_or_returned_new_si)     /* Returned sieving structure */
@@ -1485,7 +1485,7 @@ int readIniFiles (void)
         MERGE_WINDOWS = (int) IniGetInt (INI_FILE, "MergeWindows", MERGE_MAINCOMM_WINDOWS);
 
 /* Convert old TwoBackupFiles boolean to new NumBackupFiles integer.  Old default */
-/* was 2 save files, new default is 3 save files. */    
+/* was 2 save files, new default is 3 save files. */
 
         temp = (int) IniGetInt (INI_FILE, "TwoBackupFiles", 2);
         NUM_BACKUP_FILES = (int) IniGetInt (INI_FILE, "NumBackupFiles", temp+1);
@@ -1966,7 +1966,7 @@ void OutputStr (
 
                 sprintf (fmtbuf, "[%s] ", tmpbuf);
 
-/* Output the prefix for every line in the buffer */ 
+/* Output the prefix for every line in the buffer */
 
                 do {
                         const char *eol;
@@ -2248,7 +2248,7 @@ void addKnownFermatFactors (
                 if (w->n == 268435456) addKnownFermatFactor (w, "1766730974551267606529");
                 if (w->n == 536870912) addKnownFermatFactor (w, "2405286912458753");
         }
-}           
+}
 
 /* Add a work_unit to the work_unit array.  Grow the work_unit */
 /* array if necessary */
@@ -3465,7 +3465,7 @@ double work_estimate (
 /* squarings in stage 2.  Note that the stage 2 estimate is quite */
 /* optimistic for large numbers as fewer temporaries will result in nearly */
 /* double the number of squarings.  Also, pass 2 squarings are 28.5% slower */
-/* (due to all the adds). */ 
+/* (due to all the adds). */
 
         if (w->work_type == WORK_PMINUS1 || w->work_type == WORK_PFACTOR) {
                 int     stage;
@@ -5028,7 +5028,7 @@ void readMessage (
 
 /* On file read errors (or EOF), return code indicating we're done reading */
 /* the spool file. */
-        
+
         *msgType = 0;
 }
 
@@ -5396,7 +5396,7 @@ int sendProgramOptions (
                 if (!options_changed) continue;
 
 /* Send the changed options */
-        
+
                 LOCKED_WORK_UNIT = NULL;
                 rc = sendMessage (PRIMENET_PROGRAM_OPTIONS, &pkt);
                 if (rc) return (rc);
@@ -5553,7 +5553,7 @@ retry:
 
         _close (fd);
         gwmutex_unlock (&SPOOL_FILE_MUTEX);
-        
+
 /* Make sure we don't pummel the server with data.  Suppose user uses */
 /* Advanced/Factor to find tiny factors again.  At least, make sure */
 /* he only sends the data once every 5 minutes. */
@@ -5716,7 +5716,7 @@ retry:
 
 /* Handle errors that show the server processed the message properly. */
 /* These errors can happen with unwanted results (retesting known primes, */
-/* PRP results, ECM or P-1 on non-Mersennes, etc.) */ 
+/* PRP results, ECM or P-1 on non-Mersennes, etc.) */
 
                 if (rc == PRIMENET_ERROR_INVALID_ASSIGNMENT_KEY ||
                     rc == PRIMENET_ERROR_INVALID_RESULT_TYPE ||

@@ -15,7 +15,7 @@
 | MULTI-THREAD WARNING: You CAN perform gwnum operations in different
 | threads IF AND ONLY IF each uses a different gwhandle structure
 | initialized by gwinit.
-| 
+|
 |  Copyright 2002-2019 Mersenne Research, Inc.  All rights reserved.
 +---------------------------------------------------------------------*/
 
@@ -589,7 +589,7 @@ void gwsmallmul (gwhandle *gwdata, double mult, gwnum g);
 
 /* DEPRECATED!!! These routines were deprecated because unlike all other gwnum routines */
 /* the destination argument appeared before the source argument. */
-#define gwaddsmall(h,g,a) gwsmalladd(h,a,g)     
+#define gwaddsmall(h,g,a) gwsmalladd(h,a,g)
 #define gwmulsmall(h,g,m) gwsmallmul(h,m,g)
 /* Replaced by better named gwsetaddinatpowerofb */
 #define gwsetaddinatbit(h,v,b)  gwsetaddinatpowerofb(h,v,b)

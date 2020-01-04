@@ -1,5 +1,5 @@
 
-#include <windows.h> 
+#include <windows.h>
 #include <winnls.h>
 #include <tchar.h>
 #include "service.h"
@@ -91,7 +91,7 @@ VOID ServiceStart (DWORD dwArgc, LPTSTR *lpszArgv)
 //    stop code, and return.  Otherwise, the
 //    ServiceControlManager will believe that
 //    the service has stopped responding.
-//    
+//
 VOID ServiceStop()
 {
         SetThreadPriority (GetCurrentThread (), THREAD_PRIORITY_NORMAL);

@@ -53,7 +53,7 @@ inline dd_real operator+(const dd_real &a, const dd_real &b) {
   return dd_real(s, e);
 #else
 
-  /* This one satisfies IEEE style error bound, 
+  /* This one satisfies IEEE style error bound,
      due to K. Briggs and W. Kahan.                   */
   double s1, s2, t1, t2;
 
@@ -279,7 +279,7 @@ inline dd_real operator/(const dd_real &a, double b) {
   double p1, p2;
   double s, e;
   dd_real r;
-  
+
   q1 = a.hi / b;   /* approximate quotient. */
 
   /* Compute  this - q1 * d */
@@ -287,7 +287,7 @@ inline dd_real operator/(const dd_real &a, double b) {
   s = two_diff(a.hi, p1, e);
   e += a.lo;
   e -= p2;
-  
+
   /* get next approximation. */
   q2 = (s + e) / b;
 
@@ -322,7 +322,7 @@ inline dd_real operator/(const dd_real &a, const dd_real &b) {
 #else
   double q3;
   r = a - q1 * b;
-  
+
   q2 = r.hi / b.hi;
   r -= (q2 * b);
 
@@ -534,14 +534,14 @@ inline dd_real nint(const dd_real &a) {
   if (hi == a.hi) {
     /* High word is an integer already.  Round the low word.*/
     lo = nint(a.lo);
-    
+
     /* Renormalize. This is needed if hi = some integer, lo = 1/2.*/
     hi = quick_two_sum(hi, lo, lo);
   } else {
     /* High word is not an integer. */
     lo = 0.0;
     if (fabs(hi-a.hi) == 0.5 && a.lo < 0.0) {
-      /* There is a tie in the high word, consult the low word 
+      /* There is a tie in the high word, consult the low word
          to break the tie. */
       hi -= 1.0;      /* NOTE: This does not cause INEXACT. */
     }

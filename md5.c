@@ -299,7 +299,7 @@ void md5_raw_output (
 {
         MD5_CTX context;
         unsigned int len = (unsigned int) strlen (string);
-  
+
         MD5Init (&context);
         MD5Update (&context, (unsigned char *) string, len);
         MD5Final (output, &context);
@@ -314,7 +314,7 @@ void md5_raw_input (
         MD5_CTX context;
         unsigned char digest[16];
         int     i;
-  
+
         MD5Init (&context);
         MD5Update (&context, buf, len);
         MD5Final (digest, &context);

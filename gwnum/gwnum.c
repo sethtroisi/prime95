@@ -4,7 +4,7 @@
 | This file contains the C routines and global variables that are used
 | in the multi-precision arithmetic routines.  That is, all routines
 | that deal with the gwnum data type.
-| 
+|
 |  Copyright 2002-2019 Mersenne Research, Inc.  All rights reserved.
 +---------------------------------------------------------------------*/
 
@@ -327,7 +327,7 @@ int avx_prctab_index (gwhandle *gwdata, int z, int e, int c)
                 }
         }
         return (index);
-}                                   
+}
 
 /* Now the SSE2 table */
 
@@ -391,7 +391,7 @@ int sse2_prctab_index (gwhandle *gwdata, int z, int e, int c)
                 }
         }
         return (index);
-}                                   
+}
 
 /* The x87 normalization routines array has 40 combinations: */
 /*      r or i          (rational or irrational) */
@@ -780,7 +780,7 @@ static __inline const struct gwasm_jmptab *NEXT_SET_OF_JMPTABS (const struct gwa
 /* This routine checks to see if there is an FFT implementation for this FFT length and */
 /* CPU architecture.  For example, when the FFT length is just less than a power of two, on */
 /* some CPUs it may be better to use the larger power-of-two FFT length and thus there */
-/* will not be an FFT implementation for this slightly smaller FFT length. */ 
+/* will not be an FFT implementation for this slightly smaller FFT length. */
 
 int is_fft_implemented (
         gwhandle *gwdata,               /* Gwnum global data */
@@ -918,7 +918,7 @@ const struct gwasm_jmptab *choose_one_pass_or_two_pass_impl (
         gwhandle *gwdata,       /* Gwnum global data */
         const struct gwasm_jmptab *jmptab)
 {
-        const struct gwasm_jmptab *orig_jmptab; 
+        const struct gwasm_jmptab *orig_jmptab;
         int     desired_bif;            /* The "best implementation for" value we will look for. */
                                         /* See mult.asm for defined BIF_ values. */
 
@@ -1321,12 +1321,12 @@ next1:                  zpad_jmptab = NEXT_SET_OF_JMPTABS (zpad_jmptab);
                 num_small_words = (int) ((num_b_in_big_word - b_per_input_word) * jmptab->fftlen);
                 num_big_words = jmptab->fftlen - num_small_words;
                 if (k == 1.0 && n % jmptab->fftlen == 0)
-                        bits_per_output_word = 
+                        bits_per_output_word =
                                 2.0 * (num_b_in_big_word * log2b - 1.0) +
                                 0.6 * log2 (num_big_words + num_small_words / pow (2.0, log2b / 0.6)) +
                                 log2k + 1.7 * log2c;
                 else
-                        bits_per_output_word = 
+                        bits_per_output_word =
                                 floor (2.0 * (b_per_input_word + 1.0)) * log2b - 2.0 +
                                 0.6 * log2 (num_big_words + num_small_words / pow (2.0, log2b / 0.6)) +
                                 log2k + 1.7 * log2c;
@@ -1397,7 +1397,7 @@ next1:                  zpad_jmptab = NEXT_SET_OF_JMPTABS (zpad_jmptab);
                                 carries_spread_over = 6.0;
                         else                                            // Two pass AVX-512/AVX/SSE2 FFTs
                                 carries_spread_over = 6.0;
-                                
+
 /* Because carries are spread over 4 words, there is a minimum value for the bits */
 /* per FFT word.  An FFT result word must fit in the floor(bits-per-input-word) stored */
 /* in the current word plus ceil (4 * bits-per-input-word) for the carries to */
@@ -1686,7 +1686,7 @@ next3:          prev_proc_ptrs[4] = prev_proc_ptrs[3];
         if (gwdata->PASS1_SIZE && !gwdata->IN_PLACE_FFT) {
                 if (gwdata->cpu_flags & CPU_AVX512F) {          // AVX-512 scratch area size
                         int     pass1_size, num_clmblks, clmblkdst, gaps;
-                        // Mimic the clmblkdst calculations in zmult.mac.  
+                        // Mimic the clmblkdst calculations in zmult.mac.
                         pass1_size = gwdata->PASS1_SIZE;
                         num_clmblks = pass1_size >> 4;
                         clmblkdst = gwdata->PASS1_CACHE_LINES * 128;
@@ -2435,11 +2435,11 @@ int gwsetup_general_mod_giant (
         if (error_code) return (error_code);
 
 // BUG - setting the bit_length to the modulus size will break gwtogiant.
-// we need a better/more-consistent way of dealing with the various 
+// we need a better/more-consistent way of dealing with the various
 // needed bit_lengths.  Also, PFGW should not be reading the bit_length
 // value in integer.cpp.
 //      gwdata->bit_length = bits;
-        
+
 /* Allocate memory for an FFTed copy of the modulus. */
 
         gwdata->GW_MODULUS_FFT = gwalloc (gwdata);
@@ -2514,7 +2514,7 @@ int gwsetup_general_mod_giant (
 /* (when forced to use generic reduction).  These nasty patterns can trigger */
 /* spurious SUM(INPUTS) != SUM(OUTPUTS) errors.  To counter this we increase */
 /* the MAXDIFF setting. */
-        
+
         gwdata->MAXDIFF *= 1000.0;
 
 /* Create dummy string representation. Calling gtoc to get the first */
@@ -2659,7 +2659,7 @@ int convert_giant_to_k2ncd (
                 else continue;
 
 /* Examine the middle words */
-        
+
                 for (i = 2; i < test_g->sign - 1; i++)
                         if (test_g->n[i] != test_g->n[1]) break;
 
@@ -2805,7 +2805,7 @@ int internal_gwsetup (
 /* Calculate the average number of base b's stored in each FFT word.  The total */
 /* number of base b's the underlying FFT works with (i.e. the point at which data */
 /* wraps around to the low FFT word) is 2*n for a zero pad FFT and logb(k) + n */
-/* otherwise. */        
+/* otherwise. */
 
         gwdata->avg_num_b_per_word = (gwdata->ZERO_PADDED_FFT ? n * 2.0 : (logb (k) + n)) / gwdata->FFTLEN;
 
@@ -2909,7 +2909,7 @@ int internal_gwsetup (
                 }
 
 /* Build the sin/cos table used in complex pass 2 blocks */
-/* The pass 2 tables are the same as for a traditional radix-4 FFT */           
+/* The pass 2 tables are the same as for a traditional radix-4 FFT */
 
                 ASSERTG (((tables - gwdata->gwnum_memory) & 7) == 0);
                 asm_data->xsincos_complex = tables;
@@ -3020,7 +3020,7 @@ int internal_gwsetup (
                         asm_data->sincos2 = share_sincos_data (gwdata, FIXED_PASS1_SINCOS_DATA, asm_data->sincos2, (char *) tables - (char *) asm_data->sincos2);
 
 /* Build the sin/cos table used in complex pass 2 blocks */
-/* The pass 2 tables are the same as for a traditional radix-4 FFT */           
+/* The pass 2 tables are the same as for a traditional radix-4 FFT */
 
                         ASSERTG (((tables - gwdata->gwnum_memory) & 7) == 0);
                         asm_data->xsincos_complex = tables;
@@ -3194,7 +3194,7 @@ int internal_gwsetup (
                         tables = r4delay_build_fixed_pass1_table (gwdata, tables);
 
 /* Build the sin/cos table used in complex pass 2 blocks */
-/* The pass 2 tables are the same as for a traditional radix-4 FFT */           
+/* The pass 2 tables are the same as for a traditional radix-4 FFT */
 
                         ASSERTG (((tables - gwdata->gwnum_memory) & 15) == 0);
                         asm_data->xsincos_complex = tables;
@@ -3270,7 +3270,7 @@ int internal_gwsetup (
                         asm_data->sincos2 = share_sincos_data (gwdata, FIXED_PASS1_SINCOS_DATA, asm_data->sincos2, (char *) tables - (char *) asm_data->sincos2);
 
 /* Build the sin/cos table used in complex pass 2 blocks */
-/* The pass 2 tables are the same as for a traditional radix-4 FFT */           
+/* The pass 2 tables are the same as for a traditional radix-4 FFT */
 
                         ASSERTG (((tables - gwdata->gwnum_memory) & 15) == 0);
                         asm_data->xsincos_complex = tables;
@@ -3615,7 +3615,7 @@ int internal_gwsetup (
 
 /* Split k for zero-padded FFTs emulating modulo k*b^n+c.  Note we only need */
 /* to split k if k * big_word exceeds what a floating point register can hold. */
-/* 2^49 should give us enough room to handle a carry and still round properly. */       
+/* 2^49 should give us enough room to handle a carry and still round properly. */
 
                 if (k * big_word < 562949953421312.0) {
                         asm_data->u.zmm.ZMM_K_LO = k;
@@ -3703,7 +3703,7 @@ int internal_gwsetup (
 
 /* Split k for zero-padded FFTs emulating modulo k*b^n+c.  Note we only need */
 /* to split k if k * big_word exceeds what a floating point register can hold. */
-/* 2^49 should give us enough room to handle a carry and still round properly. */       
+/* 2^49 should give us enough room to handle a carry and still round properly. */
 
                 if (k * big_word < 562949953421312.0) {
                         asm_data->u.ymm.YMM_K_HI[0] = asm_data->u.ymm.YMM_K_HI[1] =
@@ -3870,7 +3870,7 @@ int internal_gwsetup (
 
 /* Split k for zero-padded FFTs emulating modulo k*b^n+c.  Note we only need */
 /* to split k if k * big_word exceeds what a floating point register can hold. */
-/* 2^49 should give us enough room to handle a carry and still round properly. */       
+/* 2^49 should give us enough room to handle a carry and still round properly. */
 
                 if (k * big_word < 562949953421312.0) {
                         asm_data->u.xmm.XMM_K_HI[0] = asm_data->u.xmm.XMM_K_HI[1] = 0.0;
@@ -4043,7 +4043,7 @@ int internal_gwsetup (
 
 /* Split k for zero-padded FFTs emulating modulo k*b^n+c.  Note we only need */
 /* to split k if k * big_word exceeds what a floating point register can hold. */
-/* 2^49 should give us enough room to handle a carry and still round properly. */       
+/* 2^49 should give us enough room to handle a carry and still round properly. */
 
                 asm_data->u.x87.K_HI = floor (k / big_word) * big_word;
                 asm_data->u.x87.K_LO = k - asm_data->u.x87.K_HI;
@@ -5309,7 +5309,7 @@ void auxiliary_thread (void *arg)
         asm_data->scratch_area = info->scratch_area;
 
 /* Init each auxiliary thread's carries area */
-        
+
         asm_data->carries = info->carries;
         if (gwdata->cpu_flags & CPU_AVX512F) {
                 int     i, carry_table_size;
@@ -5993,7 +5993,7 @@ int pass1_get_next_block_mt (
                 gwmutex_unlock (&gwdata->thread_lock);
                 return (PASS1_DO_MORE_INVERSE_FFT);
         }
-   
+
 /* We've finished this thread, merge this thread's maxerr and sumout with the main thread */
 
         if (gwdata->cpu_flags & CPU_AVX512F) {
@@ -7811,7 +7811,7 @@ void gwsetmulbyconst (
 
 /* Split k*mulconst for zero-padded FFTs emulating modulo k*b^n+c.  Note we only need */
 /* to split k*mulconst if k*mulconst * big_word exceeds what a floating point register can hold. */
-/* 2^49 should give us enough room to handle a carry and still round properly. */       
+/* 2^49 should give us enough room to handle a carry and still round properly. */
 
                 if (fabs (ktimesval) * big_word < 562949953421312.0)
                         asm_data->u.zmm.ZMM_K_TIMES_MULCONST_HI_OVER_LARGE_BASE = 0.0;
@@ -7836,7 +7836,7 @@ void gwsetmulbyconst (
 
 /* Split k*mulconst for zero-padded FFTs emulating modulo k*b^n+c.  Note we only need */
 /* to split k*mulconst if k*mulconst * big_word exceeds what a floating point register can hold. */
-/* 2^49 should give us enough room to handle a carry and still round properly. */       
+/* 2^49 should give us enough room to handle a carry and still round properly. */
 
                 if (fabs (ktimesval) * big_word < 562949953421312.0)
                         asm_data->u.ymm.YMM_K_TIMES_MULCONST_HI[0] = asm_data->u.ymm.YMM_K_TIMES_MULCONST_HI[1] =
@@ -7865,7 +7865,7 @@ void gwsetmulbyconst (
 
 /* Split k*mulconst for zero-padded FFTs emulating modulo k*b^n+c.  Note we only need */
 /* to split k*mulconst if k*mulconst * big_word exceeds what a floating point register can hold. */
-/* 2^49 should give us enough room to handle a carry and still round properly. */       
+/* 2^49 should give us enough room to handle a carry and still round properly. */
 
                 if (fabs (ktimesval) * big_word < 562949953421312.0)
                         asm_data->u.xmm.XMM_K_TIMES_MULCONST_HI[0] = asm_data->u.xmm.XMM_K_TIMES_MULCONST_HI[1] = 0.0;
@@ -7890,7 +7890,7 @@ void gwsetmulbyconst (
 
 /* Split k*mulconst for zero-padded FFTs emulating modulo k*b^n+c.  Note we only need */
 /* to split k*mulconst if k*mulconst * big_word exceeds what a floating point register can hold. */
-/* 2^49 should give us enough room to handle a carry and still round properly. */       
+/* 2^49 should give us enough room to handle a carry and still round properly. */
 
                 asm_data->u.x87.K_TIMES_MULCONST_HI = floor (ktimesval / big_word) * big_word;
                 asm_data->u.x87.K_TIMES_MULCONST_LO = ktimesval - asm_data->u.x87.K_TIMES_MULCONST_HI;
@@ -8510,7 +8510,7 @@ long nonbase2_gianttogw (
         gwnum   g,
         unsigned long limit,    /* How many FFT words to set */
         unsigned long offset,   /* Offset into FFT array of words to set */
-        long    carry)          /* Carry to add into this section */             
+        long    carry)          /* Carry to add into this section */
 {
         ASSERTG (a->sign >= 0);         /* We only handle positive numbers */
 
@@ -9006,7 +9006,7 @@ int gwiszero (
 
 /* CONCERN!!!  Could the result of a normalized multiply be greater than k*b^n+c? */
 /* If so, we should test the top FFT word and if it is bigger than the maximum valid */
-/* value, do a normalizing add identical to the code above. */  
+/* value, do a normalizing add identical to the code above. */
 
 /* Look through all the FFT data.  If each FFT word is zero, then the gwnum is zero. */
 /* If we run into just a few non-zero FFT elements, then the gwnum might still be zero */
@@ -9134,7 +9134,7 @@ void raw_gwfftmul (
 /* Test SUM(INPUTS) vs. SUM(OUTPUTS) */
 
         sumdiff = gwsuminp (gwdata, d) - gwsumout (gwdata, d);
-        if (fabs (sumdiff) > gwdata->MAXDIFF) gwdata->GWERROR |= 2; 
+        if (fabs (sumdiff) > gwdata->MAXDIFF) gwdata->GWERROR |= 2;
 
 /* Reset the unnormalized add count */
 
@@ -9302,7 +9302,7 @@ void gwsquare2 (                /* Square a number */
 /* Test SUM(INPUTS) vs. SUM(OUTPUTS) */
 
         sumdiff = gwsuminp (gwdata, d) - gwsumout (gwdata, d);
-        if (fabs (sumdiff) > gwdata->MAXDIFF) gwdata->GWERROR |= 2; 
+        if (fabs (sumdiff) > gwdata->MAXDIFF) gwdata->GWERROR |= 2;
 
 /* Reset the unnormalized add count */
 
@@ -9388,7 +9388,7 @@ void gwfftfftmul (              /* Multiply two already FFTed sources */
 /* Test SUM(INPUTS) vs. SUM(OUTPUTS) */
 
         sumdiff = gwsuminp (gwdata, d) - gwsumout (gwdata, d);
-        if (fabs (sumdiff) > gwdata->MAXDIFF) gwdata->GWERROR |= 2; 
+        if (fabs (sumdiff) > gwdata->MAXDIFF) gwdata->GWERROR |= 2;
 
 /* Reset the unnormalized add count */
 
@@ -10432,7 +10432,7 @@ void gwsmallmul (
 /* A simple brute-force implementation.  Note we cannot call gwmul as this */
 /* will use the caller's last gwsetnormroutine value which could incorrectly */
 /* multiply by a constant. */
-        
+
         if (! (gwdata->cpu_flags & (CPU_AVX512F | CPU_AVX | CPU_SSE2)) && (mult > 1024.0 || gwdata->ZERO_PADDED_FFT)) {
                 gwnum   tmp;
                 tmp = gwalloc (gwdata);

@@ -339,7 +339,7 @@ void print_timer (
 /* Set thread priority and affinity correctly.  Most screen savers run at priority 4. */
 /* Most application's run at priority 9 when in foreground, 7 when in */
 /* background.  In selecting the proper thread priority I've assumed the */
-/* program usually runs in the background. */ 
+/* program usually runs in the background. */
 
 void SetPriority (
         struct PriorityInfo *info)
@@ -430,7 +430,7 @@ void SetPriority (
 /* worker on its own physical CPU.  Run auxiliary threads on the same */
 /* physical CPU.  This might be advantageous on hyperthreaded CPUs.  User */
 /* should be careful to not run more auxiliary threads than available */
-/* logical CPUs created by hyperthreading. */ 
+/* logical CPUs created by hyperthreading. */
 
                 if (NUM_WORKER_THREADS == NUM_CPUS) {
                         bind_type = 0;                          // Set affinity to a specific physical CPU core
@@ -706,7 +706,7 @@ EXTERNC int stopCheck (
         if (thread_num < 0) return (0);
 
 /* If an important option changed in the GUI, restart all threads. */
-/* For example, the user changes the priority of all worker threads. */ 
+/* For example, the user changes the priority of all worker threads. */
 
         if (STOP_FOR_RESTART) return (STOP_RESTART);
 
@@ -1370,7 +1370,7 @@ int set_memory_usage (
 /* The 32 is an arbitrary figure that makes sure a significant amount */
 /* of new memory is available before restarting worker threads. */
 /* Be careful subtracting from AVAIL_MEM.  Since it is an unsigned long */
-/* if it goes negative it will become a large positive value instead */ 
+/* if it goes negative it will become a large positive value instead */
 
         if (all_threads_set && AVAIL_MEM > mem_usage + 32 ) {
                 for (i = 0; i < (int) NUM_WORKER_THREADS; i++) {
@@ -1398,7 +1398,7 @@ int set_memory_usage (
                         all_threads_set = FALSE;
                 }
         }
-                
+
 /* If all fixed and variable usage threads have set their memory usage, */
 /* then if we have enough free memory restart a thread that couldn't */
 /* run a work unit due to lack of available memory. */
@@ -1617,7 +1617,7 @@ int avail_mem (
 
 /* As a first approximation, mark the work unit as available for restart */
 /* if more memory is available whenever we are near minimum_memory.  The caller */
-/* can override our guess if he so desires */   
+/* can override our guess if he so desires */
 
         diff = desired_memory - minimum_memory;
         if (*memory <= minimum_memory + diff / 4)
@@ -2303,7 +2303,7 @@ void implement_pause (
         gwmutex_lock (&PAUSE_MUTEX);
 
 /* Get the pause_info struct that is causing us to pause. */
-/* Return quickly if the pause has already been cancelled. */   
+/* Return quickly if the pause has already been cancelled. */
 
         p = STOP_FOR_PAUSE[thread_num];
         if (p == NULL) {
@@ -2448,7 +2448,7 @@ void checkLoadAverage (void)
         }
 
 /* Check if we need to restart a worker.  We restart workers */
-/* one at a time so that we slowly build the load back up. */   
+/* one at a time so that we slowly build the load back up. */
 /* Wait at least a minute before rechecking the load to give the */
 /* system time to adjust the average to reflect our restarted worker. */
 
@@ -3594,7 +3594,7 @@ void saveFileBad (
         int     i, maxbad;
 
 /* Print an error message indicating failure to read the save file */
-        
+
         sprintf (buf, READFILEERR, state->current_filename);
         OutputBoth (state->thread_num, buf);
 
@@ -4237,7 +4237,7 @@ int factorSetup (
         int     num_siever_groups;              /* Multipler for facdist, num_sievers = number of residue classes of num_siever_groups */
         int     num_siever_threads;             /* Total number of threads that can be sieving */
         int     num_siever_threads_per_pool;    /* Number of threads in each pool that can sieve */
-                        
+
 /* Clear fachandle.  A precaution to ensure factorDone won't try to free uninitialized pointers. */
 
         i = facdata->num_threads;
@@ -4442,7 +4442,7 @@ memerr:         OutputStr (thread_num, "Error allocating memory for trial factor
                         facdata->pools[i].sieve_areas[j].state = SIEVE_AREA_FREE;
                 }
         }
-                        
+
 /* Allocate and initialize the bytes used to initialize a sieve */
 
         asm_data->initsieve = malloc (facdata->initsieve_primes + SIEVE_SIZE_IN_BYTES);
@@ -5861,7 +5861,7 @@ int lucasSetup (
         if (!IniGetInt (INI_FILE, "GW_BENCH_SPECIAL", 0))
                 res = gwsetup (&lldata->gwdata, 1.0, 2, p, c);
         else {  /* Special INI settings for my use only to benchmark any k,b,n,c value */
-                res = gwsetup (&lldata->gwdata, 
+                res = gwsetup (&lldata->gwdata,
                                IniGetFloat (INI_FILE, "GW_BENCH_SPECIAL_K", 1),
                                IniGetInt (INI_FILE, "GW_BENCH_SPECIAL_B", 2),
                                IniGetInt (INI_FILE, "GW_BENCH_SPECIAL_N", p),
@@ -7352,7 +7352,7 @@ const struct self_test_info SELF_TEST_DATA[MAX_SELF_TEST_ITERS] = {
 {2236671, 400, 0x45EB162A}, {2222517, 400, 0x1A128B22}, {2200339, 400, 0x0EB0E827}, {2193011, 400, 0x382B6E4B},
 {2188001, 400, 0xD012AF6A}, {2166567, 400, 0x509BA41A}, {2144651, 400, 0x54CFC0E6}, {2130357, 400, 0xC25804D8},
 {2122923, 400, 0xA47068E6}, {2100559, 400, 0xACFAB4E1}, {2088461, 400, 0xEA01E860}, {2066543, 400, 0x847DF0D0},
-{2044767, 400, 0x04225888}, {2022823, 400, 0x6EA34B32}, {2009987, 400, 0xE6A59DEF}, {2004817, 400, 0xC2FF3440}, 
+{2044767, 400, 0x04225888}, {2022823, 400, 0x6EA34B32}, {2009987, 400, 0xE6A59DEF}, {2004817, 400, 0xC2FF3440},
 {1999999, 400, 0xD645A18F}, {1998973, 400, 0xCBDD74F7}, {1997651, 400, 0x666B0CB1}, {1977987, 400, 0x30D1CD1F},
 {1970009, 400, 0x646E0DFA}, {1966081, 400, 0xB88828A1}, {1966079, 400, 0x5BD87C45}, {1955087, 400, 0x5B9426A4},
 {1899247, 400, 0x11C76E04}, {1877431, 400, 0xA3299B39}, {1855067, 400, 0x35243683}, {1833457, 400, 0xCF630DC0},
@@ -7363,7 +7363,7 @@ const struct self_test_info SELF_TEST_DATA[MAX_SELF_TEST_ITERS] = {
 {1555947, 400, 0x6797EEF4}, {1533349, 400, 0xD6897409}, {1511861, 400, 0x8A8177AC}, {1499625, 400, 0x56BB6FB3},
 {1477941, 400, 0xF3DD8ED3}, {1455931, 400, 0x31A222C7}, {1433069, 400, 0x28F01E1B}, {1411747, 400, 0x680C6E39},
 {1399449, 400, 0xB7F01A54}, {1377247, 400, 0xE656F652}, {1355991, 400, 0xB2AA2819}, {1350061, 400, 0x31F9A728},
-{1344999, 400, 0x158AA064}, {1344997, 400, 0x1D059D4F}, {1310721, 400, 0x5694A427}, {1310719, 400, 0x258BDDE3}, 
+{1344999, 400, 0x158AA064}, {1344997, 400, 0x1D059D4F}, {1310721, 400, 0x5694A427}, {1310719, 400, 0x258BDDE3},
 {1288771, 400, 0x7431D9E2}, {1266711, 400, 0xB4BC4E8D}, {1244881, 400, 0x48BC9FF9}, {1222991, 400, 0x3F5FC39E},
 {1200881, 400, 0xD5DF4944}, {1188441, 400, 0xD9D8968B}, {1166661, 400, 0xD4AB97F4}, {1144221, 400, 0x9940943B},
 {1122001, 400, 0x647406B8}, {1100881, 400, 0x3AD40CE0}, {1088511, 400, 0xD578BB51}, {1066837, 400, 0x2F82BFBB},
@@ -7371,10 +7371,10 @@ const struct self_test_info SELF_TEST_DATA[MAX_SELF_TEST_ITERS] = {
 {974849, 1000, 0x79791EDB}, {942079, 1000, 0xE528A9B0}, {933889, 1000, 0x62490F57}, {917503, 1000, 0x5F244685},
 {901121, 1000, 0x26C4E660}, {884735, 1000, 0x7BC7A661}, {860161, 1000, 0x41185F27}, {851967, 1000, 0x331AA906},
 {835585, 1000, 0x706437D3}, {819199, 1000, 0x48AFB0A5}, {802817, 1000, 0xA9645693}, {786431, 1000, 0x61080929},
-{778241, 1000, 0x1729A6C4}, {753663, 1000, 0x99C43F31}, {745473, 1000, 0x7BCE80AA}, {737279, 1000, 0x1B07A764}, 
+{778241, 1000, 0x1729A6C4}, {753663, 1000, 0x99C43F31}, {745473, 1000, 0x7BCE80AA}, {737279, 1000, 0x1B07A764},
 {720897, 1000, 0x1E96863D}, {688127, 1000, 0xD01E5A85}, {659457, 1000, 0x589C16A4}, {655359, 1000, 0x1107F161},
 {638977, 1000, 0xC88F34B4}, {630783, 1000, 0x4DD2E603}, {622593, 1000, 0x26F6FC8C}, {614399, 1000, 0x6408F880},
-{602113, 1000, 0xEFCD5BA8}, {589823, 1000, 0x0290B60B}, {573441, 1000, 0xF8F039AA}, {565247, 1000, 0xF4CA3679}, 
+{602113, 1000, 0xEFCD5BA8}, {589823, 1000, 0x0290B60B}, {573441, 1000, 0xF8F039AA}, {565247, 1000, 0xF4CA3679},
 {557057, 1000, 0xC30FE589}, {540673, 1000, 0xDA0E0D99}, {532479, 1000, 0x0072FE03}, {524289, 1000, 0xCD591388},
 {516095, 1000, 0xA6BD9423}, {487423, 1000, 0x933FFF17}, {471041, 1000, 0x18752F40}, {466943, 1000, 0xE10EE929},
 {458753, 1000, 0xE296CC00}, {450559, 1000, 0x025B1320}, {442369, 1000, 0xC22471C3}, {425985, 1000, 0xB2095F04},
@@ -7642,7 +7642,7 @@ int selfTestInternal (
         void    *bigbuf,        /* Memory block for the torture test */
         const struct self_test_info *test_data, /* Self test data */
         unsigned int test_data_count,
-        int     disabled_cpu_flags, /* Which CPU instructions we should not use */            
+        int     disabled_cpu_flags, /* Which CPU instructions we should not use */
         int     *completed,     /* Returned count of tests completed */
         int     *errors,        /* Returned count of self test errors */
         int     *warnings)      /* Returned count of self test warnings */
@@ -9330,7 +9330,7 @@ int primeBenchMultipleWorkersInternal (
                                     cores_this_node -= cores_to_use;
                                     cores_left -= cores_to_use;
                                     worker_num++;
-                                    workers_left--; 
+                                    workers_left--;
                                 }
                                 nodes_left -= nodes_to_use;
                             }
@@ -9615,7 +9615,7 @@ void autoBench (void)
             est = 0.0;
             for ( ; ; ) {
                 int     all_complex, num_benchmarks;
-                unsigned long min_fftlen, max_fftlen;    
+                unsigned long min_fftlen, max_fftlen;
 
 /* Read the next line of the work file */
 
@@ -9751,7 +9751,7 @@ void autoBench (void)
 //              spoolMessage (PRIMENET_BENCHMARK_DATA, &pkt);
 
 /* Since restarting workers will run a Jacobi test on the latest save files, we restart the Jacobi timer */
-        
+
         memset (JACOBI_ERROR_CHECK, 0, sizeof (JACOBI_ERROR_CHECK));
         start_Jacobi_timer ();
 
@@ -10328,7 +10328,7 @@ void good_news_prp (void *arg)
 
 int areTwoPRPValsEqual (
         gwhandle *gwdata,
-        unsigned long p,                /* Mersenne exponent (for shifting) */          
+        unsigned long p,                /* Mersenne exponent (for shifting) */
         gwnum   val1,                   /* Value #1 */
         unsigned long units_bit1,       /* Shift count #1 */
         gwnum   val2,                   /* Value #2 */
@@ -10980,7 +10980,7 @@ begin:  N = exp = NULL;
                         // Both PRP_STATE_DCHK_PASS1 and PRP_STATE_GERB_START_BLOCK expect alt_x to be a copy of x
                         gwcopy (&gwdata, ps.x, ps.alt_x);
                         ps.alt_units_bit = ps.units_bit;
-                        // We first compute (prp_base^k) by double-checking 
+                        // We first compute (prp_base^k) by double-checking
                         if (w->k != 1.0) {
                                 ps.state = PRP_STATE_DCHK_PASS1;
                                 ps.start_counter = 0;
@@ -11176,7 +11176,7 @@ OutputStr (thread_num, "Iteration failed.\n");
                 if ((rand () & 0x7FFF) == 134)  // one out of 32768
                         *x += 5.0;
 #endif
-                
+
 /* End iteration timing and increase count of iterations completed */
 
                 end_timer (timers, 1);

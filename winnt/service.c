@@ -108,7 +108,7 @@ void main(int argc, char **argv)
         GetIniSettings();
 
 /* Process command line */
-    
+
     if ( (argc > 1) &&
          ((*argv[1] == '-') || (*argv[1] == '/')) )
     {

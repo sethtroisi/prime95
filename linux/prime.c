@@ -221,7 +221,7 @@ int main (
                         VERBOSE = TRUE;
                         NO_GUI = FALSE;
                         break;
-                        
+
 /* -D - debug */
 
                 case 'D':
@@ -250,7 +250,7 @@ int main (
                 case 'P':
                 case 'p':
                         strcpy (pidfile, p);
-                        break; 
+                        break;
 
 /* -S - status */
 
@@ -259,7 +259,7 @@ int main (
                         MENUING = 2;
                         NO_GUI = FALSE;
                         break;
-                  
+
 
 /* -T - Torture test */
 
@@ -274,14 +274,14 @@ int main (
                 case 'v':
                         generate_application_string (buf);
                         printf ("Mersenne Prime Test Program: %s\n", buf);
-                        return (0); 
+                        return (0);
 
 /* -W - use a different working directory */
 
                 case 'W':
                 case 'w':
                         (void) _chdir (p);
-                        break; 
+                        break;
 
 /* Otherwise unknown switch */
 

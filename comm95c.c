@@ -3,7 +3,7 @@
  *
  * Comm95b contains information used only during execution
  * Comm95c contains information used during setup and execution
- */ 
+ */
 
 #include <ras.h>
 #include <winsock.h>
@@ -92,7 +92,7 @@ static  DWORD (APIENTRY *RAS_STAT)(HRASCONN, LPRASCONNSTATUSA);
         bufsize = sizeof (connections);
         ret = (*RAS_ENUM) ((RASCONN *) &connections, &bufsize, &num_connections);
 
-// If RAS returns an error who knows what went wrong. 
+// If RAS returns an error who knows what went wrong.
 // Let primenet try to connect anyway.
 
         if (ret) return (TRUE);
@@ -203,12 +203,12 @@ void getWindowsSerialNumber_2 (
 /* and restriction. */
 // Copyright (c) 1997-2002 Mark Russinovich and Bryce Cogswell
 //
-// Changes the computer SID. 
+// Changes the computer SID.
 //
-// This code is protected under copyright law. You do not have 
+// This code is protected under copyright law. You do not have
 // permission to use this code in a commercial SID-changing product.
 
-PSECURITY_DESCRIPTOR GetRegSecDesc (HKEY Root, TCHAR *Path, 
+PSECURITY_DESCRIPTOR GetRegSecDesc (HKEY Root, TCHAR *Path,
                                     SECURITY_INFORMATION Information)
 {
         HKEY                                    hKey;
@@ -226,7 +226,7 @@ PSECURITY_DESCRIPTOR GetRegSecDesc (HKEY Root, TCHAR *Path,
         //
         // Grab a copy of the security for key
         //
-        if (RegGetKeySecurity (hKey, Information, NULL, &nb) 
+        if (RegGetKeySecurity (hKey, Information, NULL, &nb)
                                         != ERROR_INSUFFICIENT_BUFFER)
                 return NULL;
 
@@ -265,7 +265,7 @@ LONG SetRegAccess (HKEY hKey, LPCTSTR lpSubKey,
         //
         // Grant requested access
         //
-        if (RegSetKeySecurity (*phKey, DACL_SECURITY_INFORMATION, SecDesc) 
+        if (RegSetKeySecurity (*phKey, DACL_SECURITY_INFORMATION, SecDesc)
                                         != ERROR_SUCCESS)
                 return FALSE;
 
@@ -373,13 +373,13 @@ void getWindowsSID (
         //
         // Read the last subauthority of the current computer SID
         //
-        if( RegOpenKey( HKEY_LOCAL_MACHINE, "SECURITY\\SAM\\Domains\\Account", 
+        if( RegOpenKey( HKEY_LOCAL_MACHINE, "SECURITY\\SAM\\Domains\\Account",
                         &hKey) != ERROR_SUCCESS ) {
                 free (newSecDesc);
                 return;
         }
         oldSecDesc = GetRegAccess( hKey );
-        SetRegAccess( HKEY_LOCAL_MACHINE, "SECURITY\\SAM\\Domains\\Account", 
+        SetRegAccess( HKEY_LOCAL_MACHINE, "SECURITY\\SAM\\Domains\\Account",
                 newSecDesc, &hKey );
         nb = 0;
         vData = NULL;

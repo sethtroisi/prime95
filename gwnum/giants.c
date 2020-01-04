@@ -3,7 +3,7 @@
  *  giants.c
  *
  *  Library for large-integer arithmetic.
- * 
+ *
  *  Massive rewrite by G. Woltman for 32-bit support
  *
  *  c. 1997,1998 Perfectly Scientific, Inc.
@@ -304,7 +304,7 @@ int gcompg (            /* Returns -1,0,1 if a<b, a=b, a>b, respectively. */
         The basic subtract "subg()" uses the following logic table:
 
      a      b          if (b > a)          if (a > b)
-     
+
      +      +          b := b - a          b := -(a - b)
      -      +          b := b + (-a)       N.A.
      +      -          N.A.                b := -((-b) + a)
@@ -313,13 +313,13 @@ int gcompg (            /* Returns -1,0,1 if a<b, a=b, a>b, respectively. */
    The basic addition routine "addg()" uses:
 
      a      b          if(b > -a)          if(-a > b)
-     
-     +      +          b := b + a          N.A. 
+
+     +      +          b := b + a          N.A.
      -      +          b := b - (-a)       b := -((-a) - b)
      +      -          b := a - (-b)       b := -((-b) - a)
      -      -          N.A.                b := -((-b) + (-a))
 
-   In this way, internal routines "normal_addg," "normal_subg," 
+   In this way, internal routines "normal_addg," "normal_subg,"
         and "reverse_subg;" each of which assumes non-negative
         operands and a non-negative result, are now used for greater
         efficiency.
@@ -868,7 +868,7 @@ void divgi (            /* n becomes n/d. n is arbitrary, but the
                 chunks = nsize / dsize - 1;
 
 /* This code only works on positive n values */
-                
+
                 if (nsign < 0) negg (n);
 
 /* Shift n right and do the first chunk */
@@ -1808,11 +1808,11 @@ void pushg (
                     gdata->stack.offset == s->offset) {
                         memmove (&gdata->stack, s, sizeof (gstacknode));
                         free (s);
-                } 
+                }
                 else if (gdata->stack.memblk != s->memblk) {
                         memmove (&gdata->stack, s, sizeof (gstacknode));
                         (*gdata->free)(gdata->handle, s);
-                } 
+                }
                 else {
                         memmove (&gdata->stack, s, sizeof (gstacknode));
                 }
@@ -1856,7 +1856,7 @@ int gsign (             /* Returns the sign of g. */
 void make_recip (       /* r becomes the steady-state reciprocal
                          * 2^(2b)/d, where b = bit-length of d-1. */
         ghandle *gdata, /* Free memory blocks for temporaries */
-        giant   d, 
+        giant   d,
         giant   r)
 {
         int     b;
@@ -1878,12 +1878,12 @@ void make_recip (       /* r becomes the steady-state reciprocal
                 gshiftright (b, tmp);
                 mulgi (gdata, d, tmp);
                 gshiftright (b, tmp);
-                addg (r, r); 
+                addg (r, r);
                 subg (tmp, r);
         } while (gcompg (r, tmp2) > 0);
         setone (tmp);
         gshiftleft (2*b, tmp);
-        gtog (r, tmp2); 
+        gtog (r, tmp2);
         mulgi (gdata, d, tmp2);
         subg (tmp2, tmp);
         while (tmp->sign < 0) {
@@ -1896,8 +1896,8 @@ void make_recip (       /* r becomes the steady-state reciprocal
 void divg_via_recip (           /* n := n/d, where r is the precalculated
                                  * steady-state reciprocal of d. */
         ghandle *gdata,         /* Free memory blocks for temporaries */
-        giant   d, 
-        giant   r, 
+        giant   d,
+        giant   r,
         giant   n)
 {
         int     s = 2*(bitlen(r)-1), sign = gsign(n);
@@ -1911,7 +1911,7 @@ void divg_via_recip (           /* n := n/d, where r is the precalculated
         n->sign = abs (n->sign);
         setzero (tmp2);
         while (1) {
-                gtog (n, tmp);  
+                gtog (n, tmp);
                 mulgi (gdata, r, tmp);
                 gshiftright (s, tmp);
                 addg (tmp, tmp2);
@@ -1995,7 +1995,7 @@ void mp_squ_cmul (int nfft, double dinout[])
 {
         int j;
         double xr, xi;
-    
+
         dinout[0] *= dinout[0];
         dinout[1] *= dinout[1];
         for (j = 2; j < nfft; j += 2) {
@@ -2010,7 +2010,7 @@ void mp_mul_cmul (int nfft, double din[], double dinout[])
 {
         int j;
         double xr, xi, yr, yi;
-    
+
         dinout[0] *= din[0];
         dinout[1] *= din[1];
         for (j = 2; j < nfft; j += 2) {
@@ -2216,7 +2216,7 @@ void addshiftedg (      /* Shift x left n words then add to g */
         if (g->sign < n) {
                 reverse_subg (x, g, n);
                 return;
-        } 
+        }
 
         g->sign -= n;
         g->n += n;
@@ -2244,7 +2244,7 @@ void onestep (          /* Do one step of the euclidean algorithm and modify
 
         ASSERTG ((*x)->sign >= (*y)->sign);
 
-        gtog (*x, q);           /* Set q = x / y */ 
+        gtog (*x, q);           /* Set q = x / y */
         divgi (gdata, *y, q);
         if (A != NULL) punch (gdata, q, A);
         mulgi (gdata, *y, q);           /* Now set x = x - q * y */
@@ -2499,7 +2499,7 @@ int ggcd (              /* A giant gcd.  Modifies its arguments. */
         return (cextgcdg (gdata, x, y, NULL, interruptable));
 
 /* Error exit */
-        
+
 done:   pushall (gdata, ss);
         return (stop_reason);
 }

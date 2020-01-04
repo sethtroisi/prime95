@@ -1,5 +1,5 @@
- 
-// Commands (ID_* and IDM_*) 
+
+// Commands (ID_* and IDM_*)
 #define HID_OPEN_EXIT                           0x1009D
 #define HID_TRAY_RESTORE                        0x1009E
 #define HIDM_CONTINUE_SWITCHER                  0x18002
@@ -33,16 +33,16 @@
 #define HIDM_MERGE_ALL                          0x18031
 #define HIDM_HELP_FORUM                         0x18032
 #define HIDM_HELP_WIKI                          0x18033
- 
-// Prompts (IDP_*) 
- 
-// Resources (IDR_*) 
+
+// Prompts (IDP_*)
+
+// Resources (IDR_*)
 #define HIDR_HTML_TORTUREDLG                    0x20067
 #define HIDR_MAINFRAME                          0x20080
 #define HIDR_MDITYPE                            0x20081
 #define HIDR_TRAYMENU                           0x2009C
- 
-// Dialogs (IDD_*) 
+
+// Dialogs (IDD_*)
 #define HIDD_ABOUTBOX                           0x20064
 #define HIDD_TEST                               0x20084
 #define HIDD_CPU                                0x20085
@@ -60,8 +60,8 @@
 #define HIDD_PRIMENET_CONNECTION                0x200A1
 #define HIDD_WORKER_START                       0x200A3
 #define HIDD_WORKER_STOP                        0x200A4
- 
-// Frame Controls (IDW_*) 
+
+// Frame Controls (IDW_*)
 // This is a part of the Microsoft Foundation Classes C++ library.
 // Copyright (C) Microsoft Corporation
 // All rights reserved.
@@ -143,7 +143,7 @@
 #define HID_OLE_VERB_1                          0x1E21E
 #define HID_OLE_VERB_1                          0x1E21F
 
-// Commands (HID_*) 
+// Commands (HID_*)
 #define HID_FILE_NEW                            0x1E100
 #define HID_FILE_OPEN                           0x1E101
 #define HID_FILE_CLOSE                          0x1E102

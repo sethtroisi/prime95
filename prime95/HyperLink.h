@@ -5,7 +5,7 @@
 // when the user clicks on the link.
 //
 // Copyright Chris Maunder, 1997-1999 (cmaunder@mail.com)
-// Feel free to use and distribute. May not be sold for profit. 
+// Feel free to use and distribute. May not be sold for profit.
 
 // 2/29/00 -- P. Shaffer standard font mod.
 
@@ -34,7 +34,7 @@ public:
     void SetURL(CString strURL);
     CString GetURL() const;
 
-    void SetColours(COLORREF crLinkColour, COLORREF crVisitedColour, 
+    void SetColours(COLORREF crLinkColour, COLORREF crVisitedColour,
                     COLORREF crHoverColour = -1);
     COLORREF GetLinkColour() const;
     COLORREF GetVisitedColour() const;

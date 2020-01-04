@@ -10,7 +10,7 @@
 |
 | NOTE:  MFC users may not be able to use the thread creation routines as
 | because we call the C runtime library thread create rather than the
-| MFC thread create routine. 
+| MFC thread create routine.
 |
 |  Copyright 2006 Mersenne Research, Inc.  All rights reserved.
 +---------------------------------------------------------------------*/

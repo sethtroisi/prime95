@@ -3,7 +3,7 @@
 |
 | This file contains the C routines to build sin/cos and weights tables
 | that the FFT assembly code needs.
-| 
+|
 |  Copyright 2002-2018 Mersenne Research, Inc.  All rights reserved.
 +---------------------------------------------------------------------*/
 
@@ -1573,7 +1573,7 @@ double *yr4_build_onepass_sincos_table (
 /* For the yr4_eight_reals_four_complex_djbfft building block levels, output the */
 /* sin/cos values needed.  The eight_reals doubles N because the real part of the FFT */
 /* is one level behind the complex part of the FFT.  The four-complex sin/cos values */
-/* are the same for all 3 of the upper YMM doubles. */          
+/* are the same for all 3 of the upper YMM doubles. */
 
                 if (!gwdata->ALL_COMPLEX_FFT) {
                         for (j = 0; j < N / 4; j++) {
@@ -1759,7 +1759,7 @@ double *yr4_build_onepass_biglit_table (
                         if (! is_big_word (gwdata, i)) continue;
 
 /* Find where this data appears in the table we are building.  Use the same algorithm */
-/* as addr_offset except no padding is necessary. */                    
+/* as addr_offset except no padding is necessary. */
 
                         top5bits = i / (gwdata->FFTLEN >> 5); j = i - top5bits * (gwdata->FFTLEN >> 5);
                         j = ((top5bits >> 2) & 3) * (gwdata->FFTLEN >> 2) + (j << 3) + ((top5bits >> 4) << 2) + (top5bits & 3);
@@ -1789,7 +1789,7 @@ double *yr4_build_onepass_biglit_table (
                 if (! is_big_word (gwdata, i)) continue;
 
 /* Find where this data appears in the table we are building.  Use the same algorithm */
-/* as addr_offset except no padding is necessary. */                    
+/* as addr_offset except no padding is necessary. */
 
                 top5bits = i / (gwdata->FFTLEN >> 5); j = i - top5bits * (gwdata->FFTLEN >> 5);
                 j = ((top5bits >> 2) & 3) * (gwdata->FFTLEN >> 2) + (j << 3) + ((top5bits >> 4) << 2) + (top5bits & 3);
@@ -1833,7 +1833,7 @@ double *yr4_build_onepass_norm_table (
                         gwfft_weights3 (gwdata->dd_data, i, &ttp, NULL, &ttmp);
 
 /* Find where this data appears in the table we are building.  Use the same algorithm */
-/* as addr_offset except no padding is necessary. */                    
+/* as addr_offset except no padding is necessary. */
 
                         top5bits = i / (gwdata->FFTLEN >> 5); j = i - top5bits * (gwdata->FFTLEN >> 5);
                         j = ((top5bits >> 2) & 3) * (gwdata->FFTLEN >> 2) + (j << 3) + ((top5bits >> 4) << 2) + (top5bits & 3);
@@ -1866,7 +1866,7 @@ double *yr4_build_onepass_norm_table (
                         gwfft_weights3 (gwdata->dd_data, i, &ttp, NULL, &ttmp);
 
 /* Find where this data appears in the table we are building.  Use the same algorithm */
-/* as addr_offset except no padding is necessary. */                    
+/* as addr_offset except no padding is necessary. */
 
                         top5bits = i / (gwdata->FFTLEN >> 5); j = i - top5bits * (gwdata->FFTLEN >> 5);
                         j = ((top5bits >> 2) & 3) * (gwdata->FFTLEN >> 2) + (j << 3) + ((top5bits >> 4) << 2) + (top5bits & 3);
@@ -3041,7 +3041,7 @@ double *yr4_build_pass2_real_table (
 /* Output one last sin/cos table for the remaining yr4_eight_reals_four_complex_djbfft */
 /* building block levels.  The eight_reals doubles N because the real part of the FFT */
 /* is one level behind the complex part of the FFT.  The four-complex sin/cos values */
-/* are the same for all 3 of the upper YMM doubles. */          
+/* are the same for all 3 of the upper YMM doubles. */
 
         avx_increment = N * 2;
         for (j = 0; j < N / 4; j++) {
@@ -3303,7 +3303,7 @@ GWASSERT (n <= 24);     // Lets see what the AVX limits really are!!!
                                 if (is_big_word (gwdata, word + upper_avx_word)) *p += 2;
                                 if (is_big_word (gwdata, word + 2 * upper_avx_word)) *p += 4;
                                 if (is_big_word (gwdata, word + 3 * upper_avx_word)) *p += 8;
-   
+
 /* Set the ttp and ttmp fudge flags for two pass FFTs.  The fudge flag is */
 /* set if the col mult * the grp mult is b times the correct fft_weight, */
 /* meaning a mul by 1/b is required to generate the correct multiplier. */
@@ -3657,7 +3657,7 @@ double *r4_build_pass2_complex_table (
                 else
                         aux_table_size = (i & 1) ? 512 : 256;
         }
-        
+
 /* If the pass 2 size is divisible by 3, then the first level does a */
 /* radix-3 step which only requires one sin/cos value.  Alas, rather than */
 /* computing the needed N/3 sin/cos values we must compute 1/2 or 2/5 times N */
@@ -5347,7 +5347,7 @@ double *hg_build_premult_table (
                         if (shifted_i > shifted_N / 2) continue;
                         if (shifted_i == 0) {
                                 unsigned long j;
-                                for (j = i; j > 3; j >>= 1);    
+                                for (j = i; j > 3; j >>= 1);
                                 if (j == 3) continue;
                         }
                 }
@@ -5391,7 +5391,7 @@ double *hg_build_premult_table (
                         }
                         table += 16;
                 }
-        
+
 /* Generate the 16 column multipliers * first 4 sin/cos values. */
 /* Also multiply by the LAST 4 sin/cos values so that the xsincos_complex */
 /* table can be 1/4 of it's usual size.  The extra room in the cache more */
@@ -5883,7 +5883,7 @@ double *x87_build_premult_table (
                         if (shifted_i > shifted_N / 2) continue;
                         if (shifted_i == 0) {
                                 unsigned long j;
-                                for (j = i; j > 3; j >>= 1);    
+                                for (j = i; j > 3; j >>= 1);
                                 if (j == 3) continue;
                         }
                 }
@@ -5916,7 +5916,7 @@ double *x87_build_premult_table (
                         }
                         table += 8;
                 }
-        
+
 /* Generate the 4 column multipliers * 4 sin/cos values */
 
                 for (k = 0; k < 4; k++) {
@@ -6062,7 +6062,7 @@ double *x87_build_norm_table (
 
         else {
                 unsigned long num_grps;
-                
+
 /* Loop to build group table */
 
                 num_grps = gwdata->FFTLEN / num_cols;

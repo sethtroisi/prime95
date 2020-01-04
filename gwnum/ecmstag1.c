@@ -642,10 +642,10 @@ void bin_ell_mul (
                 } while (c);
         }
 
-        gwfree (&gwdata, xorg); 
-        gwfree (&gwdata, zorg); 
-        gwfree (&gwdata, xs); 
-        gwfree (&gwdata, zs); 
+        gwfree (&gwdata, xorg);
+        gwfree (&gwdata, zorg);
+        gwfree (&gwdata, xs);
+        gwfree (&gwdata, zs);
 
         while (zeros--) ell_dbl (xx, zz, xx, zz);
 }
@@ -871,7 +871,7 @@ int gwnum_ecmStage1_u32 (
 /* Calculate an upper bound on the number of bits in the numbers we will be */
 /* FFTing.  Note: We allocate 60 extra bits to handle any possible k value. */
 
-        if (b) 
+        if (b)
                 bits = (unsigned long) (n * log ((double) b) / log ((double) 2.0)) + 60;
         else
                 bits = num_being_factored_array_len * sizeof (unsigned long);
@@ -1108,7 +1108,7 @@ int gwnum_ecmStage1_u64 (
 /* Calculate an upper bound on the number of bits in the numbers we will be */
 /* FFTing.  Note: We allocate 60 extra bits to handle any possible k value. */
 
-        if (b) 
+        if (b)
                 bits = (unsigned long) (n * log ((double) b) / log ((double) 2.0)) + 60;
         else
                 bits = num_being_factored_array_len * sizeof (unsigned long);

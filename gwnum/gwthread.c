@@ -3,7 +3,7 @@
 |
 | This file contains the C routines and global variables that are used
 | to implement multi-threading, mutexes, and locking.
-| 
+|
 |  Copyright 2006-2009 Mersenne Research, Inc.  All rights reserved.
 +---------------------------------------------------------------------*/
 
@@ -150,7 +150,7 @@ int gwevent_wait (
         }
 
 /* Obtain lock before reading event structure.  If we're in the signalled */
-/* state skip the wait. */ 
+/* state skip the wait. */
 
         pthread_mutex_lock (&e->event_mutex);
         if (!e->signalled_state) {
@@ -158,7 +158,7 @@ int gwevent_wait (
 /* Loop until we timeout or the signalled_count changes.  According to */
 /* pthreads documentation the conditional wait can return even though no */
 /* signal took place! */
-                
+
                 e->threads_waiting++;
                 for ( ; ; ) {
                         int     signalled_count;

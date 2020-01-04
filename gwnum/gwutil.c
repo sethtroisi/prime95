@@ -3,7 +3,7 @@
 |
 | This file contains various utility routines that may be used by gwnum
 | routines, prime95, or other consumers of gwnum.
-| 
+|
 |  Copyright 2004-2019 Mersenne Research, Inc.  All rights reserved.
 +---------------------------------------------------------------------*/
 
@@ -126,7 +126,7 @@ static  int large_pages_first_call = 1;
         HANDLE  hToken;
         LUID    luid;
         TOKEN_PRIVILEGES tp;
-        HINSTANCE hDll;      
+        HINSTANCE hDll;
         int (*pGetLargePageMinimum)(void);
 
         // Grant large page access
@@ -269,7 +269,7 @@ int gettimeofday (
         void    *tzp)
 {
         // This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
-        // until 00:00:00 January 1, 1970 
+        // until 00:00:00 January 1, 1970
         static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
 
         SYSTEMTIME  system_time;

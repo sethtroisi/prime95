@@ -1,5 +1,5 @@
 // Prime95.h : main header file for the PRIME95 application
-// 
+//
 //  Copyright 1995-2017 Mersenne Research, Inc.  All rights reserved.
 //
 

@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------
 | This file contains various utility routines that may be used by gwnum
 | routines, prime95, or other consumers of gwnum.
-| 
+|
 |  Copyright 2004-2019 Mersenne Research, Inc.  All rights reserved.
 +---------------------------------------------------------------------*/
 

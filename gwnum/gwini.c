@@ -869,7 +869,7 @@ void parseTimeLine (
                 p = *line;
                 *start_day = 1;
                 *end_day = 7;
-        } 
+        }
         *start_time = atoi (p) * 60; while (isdigit (*p)) p++;
         if (*p == ':') {
                 p++;

@@ -3,7 +3,7 @@
 |
 | This file contains the headers for the gwnum helper routines that use
 | extended-precision floats.
-| 
+|
 |  Copyright 2005-2018 Mersenne Research, Inc.  All rights reserved.
 +---------------------------------------------------------------------*/
 

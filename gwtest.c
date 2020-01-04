@@ -321,7 +321,7 @@ void test_it_all (
                 } else
                         gianttogw (&gwdata, g, x);
 
-/* Test 50 squarings */ 
+/* Test 50 squarings */
 
                 gwcopy (&gwdata, x, x2);
                 maxdiff = 0.0;
@@ -586,11 +586,11 @@ void test_it (
                 compare_with_text_and_int (thread_num, gwdata, x, g, "ExtraTest", 4);
         }
 
-/* Test 50 squarings */ 
+/* Test 50 squarings */
 
         gwsetnormroutine (gwdata, 0, 1, 0);     /* Enable error checking */
         for (i = 0; i < num_squarings; i++) {
-                
+
                 /* Test POSTFFT sometimes */
                 gwstartnextfft (gwdata, (i & 3) == 2);
 

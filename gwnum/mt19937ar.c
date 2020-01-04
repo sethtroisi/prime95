@@ -1,12 +1,12 @@
-/* 
+/*
    A C-program for MT19937, with initialization improved 2002/1/26.
    Coded by Takuji Nishimura and Makoto Matsumoto.
 
-   Before using, initialize the state by using init_genrand(seed)  
+   Before using, initialize the state by using init_genrand(seed)
    or init_by_array(init_key, key_length).
 
    Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
-   All rights reserved.                          
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
@@ -19,8 +19,8 @@
         notice, this list of conditions and the following disclaimer in the
         documentation and/or other materials provided with the distribution.
 
-     3. The names of its contributors may not be used to endorse or promote 
-        products derived from this software without specific prior written 
+     3. The names of its contributors may not be used to endorse or promote
+        products derived from this software without specific prior written
         permission.
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -45,7 +45,7 @@
 /* 7/29/09 - Modified to eliminate static variables and */
 /*           remove routines I won't need. */
 
-/* Period parameters */  
+/* Period parameters */
 #define N 624
 #define M 397
 #define MATRIX_A 0x9908b0dfUL   /* constant vector a */
@@ -62,8 +62,8 @@ void init_genrand(struct mt_state *x, unsigned long s)
 {
     x->mt[0]= s & 0xffffffffUL;
     for (x->mti=1; x->mti<N; x->mti++) {
-        x->mt[x->mti] = 
-            (1812433253UL * (x->mt[x->mti-1] ^ (x->mt[x->mti-1] >> 30)) + x->mti); 
+        x->mt[x->mti] =
+            (1812433253UL * (x->mt[x->mti-1] ^ (x->mt[x->mti-1] >> 30)) + x->mti);
         /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
         /* In the previous versions, MSBs of the seed affect   */
         /* only MSBs of the array mt[].                        */
@@ -96,7 +96,7 @@ unsigned long genrand_int32(struct mt_state *x)
 
         x->mti = 0;
     }
-  
+
     y = x->mt[x->mti++];
 
     /* Tempering */

@@ -71,7 +71,7 @@ struct primenetUpdateComputerInfo {
         char    computer_name[21];
 
         /* Returned by the server */
-        
+
         char    user_name[33];
         char    pad[1];                 /* For 4-byte alignment */
         uint32_t options_counter;       /* Number of times options have been */
@@ -128,7 +128,7 @@ struct primenetProgramOptions {
         int32_t runOnBattery;
 
         /* Returned by the server */
-        
+
         uint32_t options_counter;       /* Number of times options have been */
                                         /* updated on the server. Whenever */
                                         /* this increases client must get */
@@ -200,7 +200,7 @@ struct primenetRegisterAssignment {
         uint32_t curves;                /* ECM curves to run */
 
         /* Returned by the server */
-        
+
         char    assignment_uid[33];
         char    pad2[3];
 };
@@ -305,11 +305,11 @@ struct primenetBenchmarkData {
         struct {
                 char bench[13];         /* What was benchmarked */
                 char pad2[3];           /* Align on 8 byte boundary */
-                double timing;          /* Time it took (in seconds) */ 
+                double timing;          /* Time it took (in seconds) */
         } data_points[PRIMENET_BENCH_MAX_DATAPOINTS];
 
         /* Returned by the server */
-        
+
 };
 
 
@@ -320,7 +320,7 @@ struct primenetPingServer {
         uint32_t ping_type;
 
         /* Returned by the server */
-        
+
         char    ping_response[513];
         char    pad[3];
 };

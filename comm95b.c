@@ -7,7 +7,7 @@
  *
  * Copyright 1995-2016 Mersenne Research, Inc.  All rights reserved
  *
- */ 
+ */
 
 /* Common global variables */
 
@@ -69,7 +69,7 @@ void clearThreadHandleArray (void)
 /* Set the thread priority correctly.  Most screen savers run at priority 4. */
 /* Most application's run at priority 9 when in foreground, 7 when in */
 /* background.  In selecting the proper thread priority I've assumed the */
-/* program usually runs in the background. */ 
+/* program usually runs in the background. */
 
 void setOsThreadPriority (
         int     priority)               /* Priority, 1=low, 9=high */
