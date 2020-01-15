@@ -423,6 +423,7 @@ void base_title (int thread_num, const char *str)
 
 void title (int thread_num, const char *msg)
 {
+        printf ("\033]0;%s\a", msg);
 }
 
 void flashWindowAndBeep (void)

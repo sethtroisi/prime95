@@ -203,10 +203,10 @@ void rangeStatusMessage (
 /**********CLEANUP******************/
 
 
-/* Create a status report message about Backup/Restore files in working directory */
+/* Create a status report message about backup/restore files in working directory */
 
 #define BACKUP_STATUS       "Backup %-15s | %s.\n"
-#define BACKUP_NONE         "No Backup/Restore files (*.bu) were found in %s.\n"
+#define BACKUP_NONE         "No Backup files (*.bu) were found in %s.\n"
 #define BACKUP_CWD_ERROR    "Unable to read working directory (%s).\n"
 #define BACKUP_PARSE_ERROR  "Unable to parse (%s).\n"
 
@@ -253,6 +253,7 @@ int restoreWorkUnitFromFile (
 
 /* Load work type specific data. */
 
+// TODO move _MAGICNUM and _VERSION to header.
         switch (file_magicnum) {
         case 0x1725bcd9: // ECM_MAGICNUM:
                 //if (version != ECM_VERSION) goto readerr;
@@ -264,9 +265,12 @@ int restoreWorkUnitFromFile (
                 if (! read_long (fd, &pm1->stage, NULL)) goto readerr;
                 if (! read_long (fd, &tmp, NULL)) goto readerr;
                 w->curves_to_do = (int) tmp;
+                // Sigma
                 if (! read_double (fd, &w->curve, NULL)) goto readerr;
                 if (! read_longlong (fd, &pm1->B, NULL)) goto readerr;
+                // Stage 1 current P
                 if (! read_longlong (fd, &pm1->B_done, NULL)) goto readerr;
+                // Stage 2 current P
                 if (! read_longlong (fd, &pm1->C_done, NULL)) goto readerr;
                 break;
         case 0x317a394b: // PM1_MAGICNUM:
@@ -282,11 +286,10 @@ int restoreWorkUnitFromFile (
                 if (! read_longlong (fd, &pm1->C_done, NULL)) goto readerr;
                 if (! read_longlong (fd, &pm1->C_start, NULL)) goto readerr;
                 if (! read_longlong (fd, &pm1->C, NULL)) goto readerr;
-                /* "processed" stored in bitarray_first_number */
-                if (! read_longlong (fd, &pm1->bitarray_first_number, NULL)) goto readerr;
-                if (! read_longlong (fd, &pm1->D, NULL)) goto readerr;
-                if (! read_longlong (fd, &pm1->E, NULL)) goto readerr;
-                if (! read_longlong (fd, &pm1->rels_done, NULL)) goto readerr;
+/* "processed" is number of bits in stage 0, prime in stage 1 stored in pairs_done */
+                if (! read_longlong (fd, &pm1->pairs_done, NULL)) goto readerr;
+                if (! read_long (fd, &pm1->D, NULL)) goto readerr;
+                if (! read_long (fd, &pm1->E, NULL)) goto readerr;
                 break;
         case 0x2c7330a8: // LL_MAGICNUM:
                 //if (version != LL_VERSION) goto readerr;
@@ -298,17 +301,20 @@ int restoreWorkUnitFromFile (
                 // Store data in pm1 as llhandle doesn't have two of the fields.
                 // error_count is stored in E,
                 // count (iterations) is stored in C,
-                // units_bit (shift count) is stored in D.
-                if (! read_longlong (fd, &pm1->E, NULL)) goto readerr;
-                if (! read_longlong (fd, &pm1->C, NULL)) goto readerr;
-                if (! read_longlong (fd, &pm1->D, NULL)) goto readerr;
+                if (! read_long (fd, &pm1->E, NULL)) goto readerr;
+                if (! read_long (fd, &pm1->C, NULL)) goto readerr;
                 break;
         case 0x87f2a91b: // PRP_MAGICNUM:
                 //if (version != PRP_VERSION) goto readerr;
                 if (version != 4) goto readerr;
 
                 w->work_type =  WORK_PRP;
-/* TODO implement. */
+
+                // Store data in pm1 as llhandle doesn't have two of the fields.
+                // error_count is stored in E,
+                // count (iterations) is stored in C,
+                if (! read_long (fd, &pm1->E, NULL)) goto readerr;
+                if (! read_long (fd, &pm1->C, NULL)) goto readerr;
 
                 break;
         case 0x1567234D: // FACTOR_MAGICNUM:
@@ -360,8 +366,8 @@ void restoreStatusMessage (
                 return;
         }
 
-        // TODO what is qfd
-        //char filename_qfd[100] ;
+// TODO would be nice to sort here.
+        char filename_qfd[100] ;
         while ((dp = readdir(dfd)) != NULL)
         {
                 //sprintf( filename_qfd , "%s/%s", dir , dp->d_name) ;
@@ -370,6 +376,7 @@ void restoreStatusMessage (
                         continue ;
                 }
 
+// TODO logic to recognize non .bu versions (e.g [mep][0-9]{6,})
                 char *ext = strrchr(dp->d_name, '.');
                 if (ext && (strcmp(ext, ".bu") == 0))
                 {
@@ -383,46 +390,69 @@ void restoreStatusMessage (
                                 buf += strlen(buf);
                         } else {
 /* Process workunit and pm1 data into a status message */
-                                char status[1001];
-                                int free_len = 1000;
+                                char status[201] = {};
+                                char *status_buf = status;
 
 // TODO why is K a float???
-                                free_len -= snprintf(status, free_len, "%.0f*%ld^%ld+%ld ", w.k, w.b, w.n, w.c);
+//                                status_buf += snprintf(status_buf, free_len, "%.0f*%ld^%ld+%ld ", w.k, w.b, w.n, w.c);
                                 switch (w.work_type) {
                                 case WORK_ECM:
-                                        free_len -= snprintf(status, free_len, " ECM | %.1f | Curve %d | Stage %ld",
-                                            100 * w.pct_complete, w.curves_to_do, pm1.stage + 1);
-                                        //if (! read_longlong (fd, &pm1->B, NULL)) goto readerr;
-                                        //if (! read_longlong (fd, &pm1->B_done, NULL)) goto readerr;
-                                        //if (! read_longlong (fd, &pm1->C_done, NULL)) goto readerr;
+                                        // TODO print bounds?
+                                        status_buf += sprintf(status_buf, "ECM | Curve %d | Stage %ld (%.1f%%)",
+                                            w.curves_to_do, pm1.stage + 1, 100 * w.pct_complete);
                                         break;
                                 case WORK_PMINUS1:
-                                        free_len -= snprintf(status, free_len, " P-1 | %.1f | Stage %ld | %ld/%ld, %ld/%ld",
-                                            100 * w.pct_complete, pm1.stage, pm1.B_done, pm1.B, pm1.C_done, pm1.C);
-                                        //if (! read_longlong (fd, &pm1->C_start, NULL)) goto readerr;
-                                        //if (! read_longlong (fd, &pm1->C, NULL)) goto readerr;
-                                        ///* "processed" stored in bitarray_first_number */
-                                        //if (! read_longlong (fd, &pm1->bitarray_first_number, NULL)) goto readerr;
-                                        //if (! read_longlong (fd, &pm1->D, NULL)) goto readerr;
-                                        //if (! read_longlong (fd, &pm1->E, NULL)) goto readerr;
-                                        //if (! read_longlong (fd, &pm1->rels_done, NULL)) goto readerr;
+                                        switch (pm1.stage) {
+                                        case 3: //PM1_STAGE3
+/* Stage 1, pairs_done = processed = bit_number */
+                                            status_buf += sprintf(status_buf, "P-1 | Stage 1 (%.1f%%) B1 <%lu",
+                                                100 * w.pct_complete, pm1.pairs_done);
+                                            break;
+
+                                        case 0: //PM1_STAGE0
+/* Stage 1 after small primes, pairs_done = processed = prime */
+                                            status_buf += sprintf(status_buf, "P-1 | Stage 1 (%.1f%%) B1 @ %lu",
+                                                100 * w.pct_complete, pm1.pairs_done);
+                                            break;
+
+                                        case 1: //PM1_STAGE1
+/* Stage 2 after small primes, pairs_done = processed = B1 bound */
+                                            status_buf += sprintf(status_buf, "P-1 | B1=%0.f complete, Stage 2 (%.1f%%)",
+                                                (double) pm1.B, 100 * w.pct_complete);
+                                            break;
+
+                                        case 2: //PM1_DONE
+/* P-1 done */
+                                            status_buf += sprintf(status_buf, "P-1 | B1=%.0f", (double) pm1.B);
+                                            if (pm1.C > pm1.B) {
+                                                status_buf += sprintf(status_buf, ",B2=%.0f", (double) pm1.C);
+                                                if (pm1.E >= 2)
+                                                    status_buf += sprintf(status_buf, ",E=%lu", pm1.E);
+                                            }
+                                            status_buf += sprintf(status_buf, " complete");
+                                            break;
+                                        }
                                         break;
+
                                 case WORK_TEST: // LL
-                                        // Store data in pm1 as llhandle doesn't have two of the fields.
-                                        // error_count is stored in E,
-                                        // count (iterations) is stored in C,
-                                        // units_bit (shift count) is stored in D.
-                                        //if (! read_longlong (fd, &pm1->E, NULL)) goto readerr;
-                                        //if (! read_longlong (fd, &pm1->C, NULL)) goto readerr;
-                                        //if (! read_longlong (fd, &pm1->D, NULL)) goto readerr;
+                                        /* TODO print error count? */
+                                        status_buf += sprintf(status_buf, "LL  | Iteration %lu/%lu [%0.2f%%]",
+                                            pm1.C, w.n, 100 * w.pct_complete);
                                         break;
+
                                 case WORK_PRP:
+                                        /* TODO print error count? */
+                                        status_buf += sprintf(status_buf, "PRP | Iteration %lu/%lu [%0.2f%%]",
+                                            pm1.C, w.n, 100 * w.pct_complete);
                                         break;
+
                                 case WORK_FACTOR:
                                         break;
-                                default:
-                                        break;
+
                                 }
+
+                                if (strlen(status) == 0)
+                                    sprintf(status, "UNKNOWN");
 
                                 snprintf(buf, buflen, BACKUP_STATUS, dp->d_name, status);
                                 buflen -= strlen(buf);

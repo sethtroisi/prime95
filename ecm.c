@@ -4325,8 +4325,8 @@ void calc_exp (
 /* because mpz_mul will be handling arguments of equal size. */
 
         if (len >= 1024) {
-                mpz_t   x;
                 calc_exp (pm1data, k, b, n, c, g, B1, p, lower, lower + (len >> 1));
+                mpz_t   x;
                 mpz_init (x);
                 calc_exp (pm1data, k, b, n, c, x, B1, p, lower + (len >> 1), upper);
                 mpz_mul (g, x, g);
