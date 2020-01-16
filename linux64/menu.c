@@ -588,9 +588,10 @@ void test_status (void)
 void restore_file_status (void)
 {
         char    buf[10000];
-/* TODO should it be sizeof (buf) - 1? */
         restoreStatusMessage (buf, sizeof (buf));
-        strcat (buf, "\n");
+        if (strlen(buf) > 0 && buf[strlen(buf)-1] != '\n') {
+            strcat (buf, "\n");
+        }
         outputLongLine (buf);
 }
 
@@ -1306,7 +1307,7 @@ void main_menu (void)
                 test_status ();
                 printf ("\n---------- Restore Status ----------\n");
                 restore_file_status ();
-                printf ("\n---------- Restore Status ----------\n");
+                printf ("---------- Restore Status ----------\n");
                 askOK ();
                 break;
 

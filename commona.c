@@ -195,19 +195,22 @@ void rangeStatusMessage (
 
 
 /**********CLEANUP******************/
-/* TODO make opendir & readdir generics for mac/windows */
+/* TODO make opendir, readdir, getcwd generics for mac/windows */
 
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 /**********CLEANUP******************/
 
 
 /* Create a status report message about backup/restore files in working directory */
 
-#define BACKUP_STATUS       "Backup %-15s | %s.\n"
+#define MAX_BACKUP_FILES    100
+#define BACKUP_CWD          "Status of files in '%s'.\n"
+#define BACKUP_CWD_ERROR    "Unable to read working directory.\n"
+#define BACKUP_STATUS       "Backup %-16s | %s.\n"
 #define BACKUP_NONE         "No Backup files (*.bu) were found in %s.\n"
-#define BACKUP_CWD_ERROR    "Unable to read working directory (%s).\n"
 #define BACKUP_PARSE_ERROR  "Unable to parse (%s).\n"
 
 int restoreWorkUnitFromFile (
@@ -223,14 +226,12 @@ int restoreWorkUnitFromFile (
         double  pct_complete;
         unsigned long tmp;
 
-// See pct_complete_from_savefile
-
         w->work_type = WORK_NONE;
 
         fd = _open (filename, _O_BINARY | _O_RDONLY);
         if (fd <= 0) goto readerr;
 
-/* Load the file magicnum */
+/* Load the file magicnum. */
 
         // read_magicnum & read_header don't return the read values.
         // reusing portions of that code here.
@@ -286,7 +287,7 @@ int restoreWorkUnitFromFile (
                 if (! read_longlong (fd, &pm1->C_done, NULL)) goto readerr;
                 if (! read_longlong (fd, &pm1->C_start, NULL)) goto readerr;
                 if (! read_longlong (fd, &pm1->C, NULL)) goto readerr;
-/* "processed" is number of bits in stage 0, prime in stage 1 stored in pairs_done */
+                /* "processed" is number of bits in stage 0, prime in stage 1 stored in pairs_done */
                 if (! read_longlong (fd, &pm1->pairs_done, NULL)) goto readerr;
                 if (! read_long (fd, &pm1->D, NULL)) goto readerr;
                 if (! read_long (fd, &pm1->E, NULL)) goto readerr;
@@ -338,126 +339,190 @@ readerr:
         return (FALSE);
 }
 
+
+int isTempFileName(char *filename)
+{
+/* Shortest reasonable file is p13_3 for 1*2^13+3 */
+    if (strlen(filename) <= 4)
+        return (FALSE);
+
+/* Check if file is [mpef][0-9]*(_[0-9]*)(_[0-9]*) */
+    char type = filename[0];
+    if (!(type == 'm' || type == 'p' || type == 'e' || type == 'f'))
+        return (FALSE);
+
+    int underscores = 0;
+    int i = 1;
+    for (; i < strlen(filename); i++) {
+        char d = filename[i];
+        if (d == '_') {
+            underscores++;
+            if (underscores > 2)
+                return (FALSE);
+        } else if (d == '.' && i > 1) {
+            break;
+        } else if (d < '0' || d > '9') {
+            return (FALSE);
+        }
+    }
+    if (i == strlen(filename))
+        return (TRUE);
+
+    char * test = filename + i;
+
+/* Check if file ends in optional .bu[0-9]* */
+    if (strcmp(filename + i, ".bu") == 0) {
+        i += 3;
+        for (; i < strlen(filename); i++) {
+            char d = filename[i];
+            if (d < '0' || d > '9') {
+                return (FALSE);
+            }
+        }
+        return (TRUE);
+    }
+
+    return (FALSE);
+}
+
+
+int cmpFileName(void const *a, void const *b) {
+    return strcmp((const char *) a, (const char *) b);
+}
+
+
 void restoreStatusMessage (
         char    *buf,
-        unsigned int buflen)            /* Originally coded for a 1000 character buffer */
+        unsigned int buflen)
 {
-        unsigned int ll_and_prp_cnt, ecm_and_pm1_cnt;
         char    *orig_buf;
 
 /* TODO augment by checking how many of these are mentioned in worktodo. */
 
-/* Init.  Default is 16 lines in a 1000 character buffer */
         orig_buf = buf;
 
-/* TODO add ll_and_prp_cnt and ecm_and_pm1_cnt */
-/* TODO get wDir name so it can be added to status message */
+/* Get current working directory */
+        char cwd[260];
+        if (getcwd(cwd, sizeof(cwd)) == NULL) {
+                sprintf(buf, BACKUP_CWD_ERROR);
+                return;
+        } else {
+                char *last_dir = strrchr(cwd, '/');
+                if (last_dir == NULL)
+                    last_dir = cwd;
+                else if (*last_dir == '/')
+                    last_dir++;
 
-// #include <unistd.h>
-//    if (getcwd(cwd, sizeof(cwd)) != NULL) {
-//      printf("Current working dir: %s\n", cwd);
+                snprintf(buf, buflen, BACKUP_CWD, last_dir);
+                buflen -= strlen(buf);
+                buf += strlen(buf);
+        }
+
+/* Read up to MAX_BACKUP_FILES, 100 char backup filenames. */
+        char status_filename[MAX_BACKUP_FILES][100] = {};
 
         struct dirent *dp;
         DIR *dfd;
-        if ((dfd = opendir(".")) == NULL)
-        {
-                sprintf(buf, BACKUP_CWD_ERROR, "TODO");
-                buf += strlen(buf);
+        if ((dfd = opendir(".")) == NULL) {
+                sprintf(buf, BACKUP_CWD_ERROR);
                 return;
         }
 
-// TODO would be nice to sort here.
-        char filename_qfd[100] ;
+        int status_files = 0;
         while ((dp = readdir(dfd)) != NULL)
         {
-                //sprintf( filename_qfd , "%s/%s", dir , dp->d_name) ;
-                if( dp->d_type != DT_REG )
-                {
-                        continue ;
-                }
+            if (dp->d_type != DT_REG)
+                    continue;
 
-// TODO logic to recognize non .bu versions (e.g [mep][0-9]{6,})
-                char *ext = strrchr(dp->d_name, '.');
-                if (ext && (strcmp(ext, ".bu") == 0))
-                {
-                        // Load File into work_unit.
-                        struct work_unit w;
-                        pm1handle pm1;
-                        if (!restoreWorkUnitFromFile(dp->d_name, &w, &pm1))
-                        {
-                                snprintf(buf, buflen, BACKUP_PARSE_ERROR, dp->d_name);
-                                buflen -= strlen(buf);
-                                buf += strlen(buf);
-                        } else {
+            /* Assumes all backup filenames are < 100 characters . */
+            if (strlen(dp->d_name) < 100 && isTempFileName(dp->d_name)) {
+                    strcpy(status_filename[status_files++], dp->d_name);
+                    if (status_files == MAX_BACKUP_FILES)
+                            break;
+            }
+        }
+
+/* Sort backup filenames. */
+        qsort(status_filename, status_files, sizeof(status_filename[0]), cmpFileName);
+
+        for (int i=0; i < status_files; i++) {
+                char* filename = status_filename[i];
+
+                // Load File into work_unit.
+                struct work_unit w;
+                pm1handle pm1;
+                if (!restoreWorkUnitFromFile(filename, &w, &pm1)) {
+                        snprintf(buf, buflen, BACKUP_PARSE_ERROR, filename);
+                        buflen -= strlen(buf);
+                        buf += strlen(buf);
+                } else {
+
 /* Process workunit and pm1 data into a status message */
-                                char status[201] = {};
-                                char *status_buf = status;
+                        char status[201] = {};
+                        char *status_buf = status;
 
-// TODO why is K a float???
-//                                status_buf += snprintf(status_buf, free_len, "%.0f*%ld^%ld+%ld ", w.k, w.b, w.n, w.c);
-                                switch (w.work_type) {
-                                case WORK_ECM:
-                                        // TODO print bounds?
-                                        status_buf += sprintf(status_buf, "ECM | Curve %d | Stage %ld (%.1f%%)",
-                                            w.curves_to_do, pm1.stage + 1, 100 * w.pct_complete);
-                                        break;
-                                case WORK_PMINUS1:
-                                        switch (pm1.stage) {
-                                        case 3: //PM1_STAGE3
+                        /* TODO should I print the number here? And why is K a float? */
+                        // status_buf += sprintf(status_buf, "%g*%lu^%lu%c%lu | ", w.k, w.b, w.n, w.c < 0 ? '-' : '+', abs(w.c));
+                        switch (w.work_type) {
+                        case WORK_ECM:
+                                // TODO print bounds?
+                                status_buf += sprintf(status_buf, "ECM | Curve %d | Stage %ld (%.1f%%)",
+                                    w.curves_to_do, pm1.stage + 1, 100 * w.pct_complete);
+                                break;
+                        case WORK_PMINUS1:
+                                switch (pm1.stage) {
+                                case 3: //PM1_STAGE3
 /* Stage 1, pairs_done = processed = bit_number */
-                                            status_buf += sprintf(status_buf, "P-1 | Stage 1 (%.1f%%) B1 <%lu",
-                                                100 * w.pct_complete, pm1.pairs_done);
-                                            break;
+                                    status_buf += sprintf(status_buf, "P-1 | Stage 1 (%.1f%%) B1 <%lu",
+                                        100 * w.pct_complete, pm1.pairs_done);
+                                    break;
 
-                                        case 0: //PM1_STAGE0
+                                case 0: //PM1_STAGE0
 /* Stage 1 after small primes, pairs_done = processed = prime */
-                                            status_buf += sprintf(status_buf, "P-1 | Stage 1 (%.1f%%) B1 @ %lu",
-                                                100 * w.pct_complete, pm1.pairs_done);
-                                            break;
+                                    status_buf += sprintf(status_buf, "P-1 | Stage 1 (%.1f%%) B1 @ %lu",
+                                        100 * w.pct_complete, pm1.pairs_done);
+                                    break;
 
-                                        case 1: //PM1_STAGE1
+                                case 1: //PM1_STAGE1
 /* Stage 2 after small primes, pairs_done = processed = B1 bound */
-                                            status_buf += sprintf(status_buf, "P-1 | B1=%0.f complete, Stage 2 (%.1f%%)",
-                                                (double) pm1.B, 100 * w.pct_complete);
-                                            break;
+                                    status_buf += sprintf(status_buf, "P-1 | B1=%0.f complete, Stage 2 (%.1f%%)",
+                                        (double) pm1.B, 100 * w.pct_complete);
+                                    break;
 
-                                        case 2: //PM1_DONE
+                                case 2: //PM1_DONE
 /* P-1 done */
-                                            status_buf += sprintf(status_buf, "P-1 | B1=%.0f", (double) pm1.B);
-                                            if (pm1.C > pm1.B) {
-                                                status_buf += sprintf(status_buf, ",B2=%.0f", (double) pm1.C);
-                                                if (pm1.E >= 2)
-                                                    status_buf += sprintf(status_buf, ",E=%lu", pm1.E);
-                                            }
-                                            status_buf += sprintf(status_buf, " complete");
-                                            break;
-                                        }
-                                        break;
-
-                                case WORK_TEST: // LL
-                                        /* TODO print error count? */
-                                        status_buf += sprintf(status_buf, "LL  | Iteration %lu/%lu [%0.2f%%]",
-                                            pm1.C, w.n, 100 * w.pct_complete);
-                                        break;
-
-                                case WORK_PRP:
-                                        /* TODO print error count? */
-                                        status_buf += sprintf(status_buf, "PRP | Iteration %lu/%lu [%0.2f%%]",
-                                            pm1.C, w.n, 100 * w.pct_complete);
-                                        break;
-
-                                case WORK_FACTOR:
-                                        break;
-
+                                    status_buf += sprintf(status_buf, "P-1 | B1=%.0f", (double) pm1.B);
+                                    if (pm1.C > pm1.B) {
+                                        status_buf += sprintf(status_buf, ",B2=%.0f", (double) pm1.C);
+                                        if (pm1.E >= 2)
+                                            status_buf += sprintf(status_buf, ",E=%lu", pm1.E);
+                                    }
+                                    status_buf += sprintf(status_buf, " complete");
+                                    break;
                                 }
+                                break;
 
-                                if (strlen(status) == 0)
-                                    sprintf(status, "UNKNOWN");
+                        case WORK_TEST:
+                                status_buf += sprintf(status_buf, "LL  | Iteration %lu/%lu [%0.2f%%]",
+                                    pm1.C, w.n, 100 * w.pct_complete);
+                                break;
 
-                                snprintf(buf, buflen, BACKUP_STATUS, dp->d_name, status);
-                                buflen -= strlen(buf);
-                                buf += strlen(buf);
+                        case WORK_PRP:
+                                status_buf += sprintf(status_buf, "PRP | Iteration %lu/%lu [%0.2f%%]",
+                                    pm1.C, w.n, 100 * w.pct_complete);
+                                break;
+
+                        case WORK_FACTOR:
+                                break;
+
                         }
+
+                        if (strlen(status) == 0)
+                            sprintf(status, "UNKNOWN");
+
+                        snprintf(buf, buflen, BACKUP_STATUS, filename, status);
+                        buflen -= strlen(buf);
+                        buf += strlen(buf);
                 }
         }
 }
