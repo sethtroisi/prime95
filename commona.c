@@ -213,14 +213,80 @@ void rangeStatusMessage (
 #define BACKUP_NONE         "No Backup files (*.bu) were found in %s.\n"
 #define BACKUP_PARSE_ERROR  "Unable to parse (%s).\n"
 
+<<<<<<< Updated upstream
 int restoreWorkUnitFromFile (
         char    *filename,
         struct work_unit *w,
         pm1handle *pm1)
+=======
+void restoreStatusMessage (
+        char    *buf,
+        unsigned int buflen)            /* Originally coded for a 1000 character buffer */
+{
+        unsigned int ll_and_prp_cnt, ecm_and_pm1_cnt;
+        char    *orig_buf;
+
+/* TODO augment by checking how many of these are mentioned in worktodo. */
+
+/* Init.  Default is 16 lines in a 1000 character buffer */
+        orig_buf = buf;
+
+/* TODO add ll_and_prp_cnt and ecm_and_pm1_cnt */
+/* TODO get wDir name so it can be added to status message */
+
+// #include <unistd.h>
+//    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+//      printf("Current working dir: %s\n", cwd);
+
+        struct dirent *dp;
+        DIR *dfd;
+        if ((dfd = opendir(".")) == NULL)
+        {
+                sprintf(buf, BACKUP_CWD_ERROR, "TODO");
+                buf += strlen(buf);
+                return;
+        }
+
+        // TODO what is qfd
+        //char filename_qfd[100] ;
+        while ((dp = readdir(dfd)) != NULL)
+        {
+                //sprintf( filename_qfd , "%s/%s", dir , dp->d_name) ;
+                if( dp->d_type != DT_REG )
+                {
+                        continue ;
+                }
+
+                char *ext = strrchr(dp->d_name, '.');
+                if (ext && strcmp(ext, ".bu")) {
+                        // Load File into work_unit.
+                        struct work_unit w;
+                        pm1handle pm1;
+                        if (!restoreWorkUnitFromFile(dp->d_name, &w, &pm1))
+                        {
+                                snprintf(buf, buflen, BACKUP_PARSE_ERROR, dp->d_name);
+                                buflen -= strlen(buf);
+                                buf += strlen(buf);
+                        }
+                }
+        }
+}
+
+int restoreWorkUnitFromFile (
+        char    *filename,
+        struct work_unit *w,
+        struct pm1handle *pm1)
+>>>>>>> Stashed changes
 {
         int        fd;
         unsigned long file_magicnum;
         unsigned long version;
+<<<<<<< Updated upstream
+=======
+        double  k;
+        unsigned long b, n;
+        signed long    c;
+>>>>>>> Stashed changes
         char    pad;
         char    stage[11];
         double  pct_complete;
@@ -256,6 +322,7 @@ int restoreWorkUnitFromFile (
 
 // TODO move _MAGICNUM and _VERSION to header.
         switch (file_magicnum) {
+<<<<<<< Updated upstream
         case 0x1725bcd9: // ECM_MAGICNUM:
                 //if (version != ECM_VERSION) goto readerr;
                 if (version != 1) goto readerr;
@@ -273,6 +340,20 @@ int restoreWorkUnitFromFile (
                 if (! read_longlong (fd, &pm1->B_done, NULL)) goto readerr;
                 // Stage 2 current P
                 if (! read_longlong (fd, &pm1->C_done, NULL)) goto readerr;
+=======
+        case: ECM_MAGICNUM
+                // duplicated from ecm.c (minus reading data)
+                w->work_type =  WORK_ECM;
+                if (version != ECM_VERSION) return (FALSE);
+
+                if (! read_long (fd, &tmp, NULL)) return (FALSE)
+                w->stage[0] = (char) tmp;
+                if (! read_long (fd, w->curves_to_do, NULL)) goto readerr;
+                if (! read_double (fd, w->curve, NULL)) goto readerr;
+                if (! read_longlong (fd, w-> B, NULL)) goto readerr;
+                if (! read_longlong (fd, w-> B_PROCESSED, NULL)) goto readerr;
+                if (! read_longlong (fd, w-> C_PROCESSED, NULL)) goto readerr;
+>>>>>>> Stashed changes
                 break;
         case 0x317a394b: // PM1_MAGICNUM:
                 //if (version != PM1_VERSION) goto readerr;
@@ -280,17 +361,32 @@ int restoreWorkUnitFromFile (
 
                 // duplicated from ecm.c pm1_restore (minus reading data)
                 w->work_type =  WORK_PMINUS1;
+<<<<<<< Updated upstream
 
                 if (! read_long (fd, &pm1->stage, NULL)) goto readerr;
                 if (! read_longlong (fd, &pm1->B_done, NULL)) goto readerr;
+=======
+                if (version != PM1_VERSION) return (FALSE);
+
+                if (! read_long (fd, &pm1->stage, NULL)) goto readerr;
+                if (! read_longlong (fd, &pm1->B_DONE, NULL)) goto readerr;
+>>>>>>> Stashed changes
                 if (! read_longlong (fd, &pm1->B, NULL)) goto readerr;
                 if (! read_longlong (fd, &pm1->C_done, NULL)) goto readerr;
                 if (! read_longlong (fd, &pm1->C_start, NULL)) goto readerr;
                 if (! read_longlong (fd, &pm1->C, NULL)) goto readerr;
+<<<<<<< Updated upstream
                 /* "processed" is number of bits in stage 0, prime in stage 1 stored in pairs_done */
                 if (! read_longlong (fd, &pm1->pairs_done, NULL)) goto readerr;
                 if (! read_long (fd, &pm1->D, NULL)) goto readerr;
                 if (! read_long (fd, &pm1->E, NULL)) goto readerr;
+=======
+                /* "processed" stored in bitarray_first_number */
+                if (! read_longlong (fd, &pm1->bitarray_first_number, NULL)) goto readerr;
+                if (! read_longlong (fd, &pm1->D, NULL)) goto readerr;
+                if (! read_longlong (fd, &pm1->E, NULL)) goto readerr;
+                if (! read_longlong (fd, &pm1->rels_done, NULL)) goto readerr;
+>>>>>>> Stashed changes
                 break;
         case 0x2c7330a8: // LL_MAGICNUM:
                 //if (version != LL_VERSION) goto readerr;
