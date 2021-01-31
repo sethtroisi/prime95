@@ -12,4 +12,5 @@
 
 void sanitizeString (char *);
 void rangeStatusMessage (char *, unsigned int);
+void restoreStatusMessage (char *, unsigned int);
 int min_cores_for_work_pref (int work_pref);

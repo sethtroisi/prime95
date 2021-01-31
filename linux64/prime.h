@@ -119,6 +119,7 @@ void Sleep (long);
 void test_user(void);
 void test_welcome(void);
 void test_status(void);
+void restore_file_status (void);
 
 /* Routine definitions */
 
