@@ -53,9 +53,12 @@ ostensible the file format is
 """
 This has been tested with
   * v29.8 build 6
+  * v30.3 build 6
 """
 
 
+import argparse
+import json
 import os
 import re
 import struct
@@ -92,6 +95,19 @@ BACKUP_PTN = re.compile("[emp][0-9]+(_[0-9]+){0,2}(.bu[0-9]*)?$")
 
 
 
+def get_arg_parser():
+    parser = argparse.ArgumentParser(description="Parse prime95 status/backup files")
+
+    parser.add_argument('dir', type=str, default=".",
+        help="Directory for with status/backup files")
+
+    parser.add_argument('--json', type=str, default="",
+        help="Save JSON data in this file")
+
+    parser.add_argument('--skip-failed', action="store_true",
+        help="Don't output anything for failed files")
+
+    return parser
 
 def scan_directory(dir_name):
     names = []
@@ -293,7 +309,7 @@ def parse_work_unit_from_file(filename):
                     wu["B2_guess"] = wu["C_done"]
 
             elif version != PM1_VERSION:
-                #sys.exit(f"P-1({magic}) with version {version}!")
+                sys.stderr.write(f"P-1 with version {version} {filename!r}\n")
                 return None
 
 
@@ -311,7 +327,8 @@ def parse_work_unit_from_file(filename):
 
         elif magic == PRP_MAGICNUM:
             if version > 7:
-                sys.exit(f"PRP({magic}) with version {version}!")
+                sys.stderr.write(f"PRP with version {version} {filename!r}\n")
+                return None
 
             wu["work_type"] = "WORK_PRP"
 
@@ -328,7 +345,7 @@ def parse_work_unit_from_file(filename):
             # TODO: implement WORK_FACTOR report
 
         else:
-            sys.stderr(f"Unknown type magicnum = {magic}")
+            sys.stderr.write(f"Unknown type magicnum = {magic}\n")
             return None
 
     return wu
@@ -391,19 +408,19 @@ def one_line_status(fn, wu, name_pad):
     return fn.ljust(name_pad) + " | " + buf
 
 
-def main(dir_name = "."):
-    names = sorted(scan_directory(dir_name))
+def main(args):
+    names = sorted(scan_directory(args.dir))
 
     parsed = {}
     failed = []
     for name in names:
-        result = parse_work_unit_from_file(os.path.join(dir_name, name))
+        result = parse_work_unit_from_file(os.path.join(args.dir, name))
         if result is not None:
             parsed[name] = result
         else:
             failed.append(name)
 
-    if failed:
+    if failed and not args.skip_failed:
         print()
         print(f"FAILED ({len(failed)}):")
         for i, name in enumerate(failed):
@@ -411,10 +428,19 @@ def main(dir_name = "."):
         print()
 
     longest_name = min(20, max(map(len, parsed.keys()), default=0))
-    print(f"Found {len(names)} backup files in {dir_name!r}")
+    print(f"Found {len(names)} backup files in {args.dir!r}")
     for name in sorted(parsed):
         print(one_line_status(name, parsed[name], longest_name))
 
+    if args.json:
+        print(f"Writing json data to {args.json!r}")
+        with open(args.json, "w") as f:
+            json.dump(parsed, f, indent=4)
+
+
+
 if __name__ == "__main__":
-    directory = "." if len(sys.argv) < 2 else sys.argv[1]
-    main(directory)
+    parser = get_arg_parser()
+    args = parser.parse_args()
+
+    main(args)
