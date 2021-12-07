@@ -35,17 +35,29 @@ partial_setup() {
     trace_on
     echo "$comment" > "$fn.log"
 
-    timeout "$stoptime" ./mprime -d | tee -a "$fn.log"
+    timeout "$stoptime" ./mprime_test -d | tee -a "$fn.log"
 }
 
 
-echo "Creating temporary in folder \"$1\""
-mkdir "$1"
-cd "$1"
+if test "$#" -ne 2; then
+  echo "Usage: $0 <TEST_DIR_NAME> <MPRIME_BINARY_PATH>"
+  exit 1
+fi
 
-ln -s ../mprime .
+echo "Creating temporary in folder \"$2\""
+mkdir "$2"
+cd "$2"
 
-./mprime -v | tee version.txt
+echo "Using mprime from \"$1\""
+if test -f "$1"; then
+  ln -s "$1" mprime_test
+elif test -f "../$1"; then
+  ln -s "../$1" mprime_test
+else
+  echo "can't find mprime at \"$1\""
+fi
+
+./mprime_test -v | tee version.txt
 
 cat <<- 'EOF' > local.txt
 	WorkerThreads=1
@@ -56,24 +68,23 @@ cat <<- 'EOF' > prime.txt
 	OutputIterations=1000000
 EOF
 
-
-echo -e "Y\nN\nY\n5\n" | ./mprime > /dev/null
+echo -e "Y\nN\nY\n5\n" | ./mprime_test > /dev/null
 
 partial_setup 4  "ECM2=1,2,14009,-1,2000000,0,5"            e0014009 "ECM, stopped at ~10% stage1"
 partial_setup 5  "ECM2=1,2,14153,-1,10000,200000000,5"      e0014153 "ECM, stopped at ~20% stage2"
 partial_setup 4  "ECM2=1,2,14243,-1,6000,3000000,100"       e0014243 "ECM, stopped in stage2, curve > 1"
 
-partial_setup 5  "Pminus1=N/A,1,2,13003,-1,200000000,0"     m0013003 "PM1, Stopping in small primes ~1%"
-partial_setup 25 "Pminus1=N/A,1,2,13007,-1,200000000,0"     m0013007 "PM1, Stopping in stage 1 ~7%"
+partial_setup 2  "Pminus1=N/A,1,2,2237,-1,200000000,0"      m0002237 "PM1, Stopping in small primes ~2%"
+partial_setup 8  "Pminus1=N/A,1,2,2267,-1,200000000,0"      m0002267 "PM1, Stopping in stage 1 ~8%"
 
 partial_setup 2  "Pminus1=N/A,1,2,13009,-1,10000,10000"     m0013009 "PM1, B1 only, 1e5 finished"
 partial_setup 3  "Pminus1=N/A,1,2,13121,-1,100000,90000000" m0013121 "PM1, Stopping in stage 2 ~30%"
 partial_setup 2  "Pminus1=N/A,1,2,13217,-1,100000,1000000"  m0013217 "PM1, B1=1e6, B2=10e6 finished"
 
-partial_setup 1  "PRP=1,2,500009,-1"    p0500009       "PRP, stopped at ~4%"
+partial_setup 2  "PRP=1,2,700001,-1"    p0700001       "PRP, stopped at ~3%"
 partial_setup 10 "PRP=46157,2,698207,1" p46157_698207  "PRP, Seventeen or Bust prime stopped at ~8%"
 partial_setup 3  "PRP=6,10,71299,7"     p6_71299_7     "PRP, Near Repunit prime stopped at ~30%"
 
 ls | grep -v '\.txt$'
 cd ..
-./prime95_status.py "$1"
+./prime95_status.py "$2"
