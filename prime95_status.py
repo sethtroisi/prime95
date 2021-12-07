@@ -72,12 +72,11 @@ SPOOL_FILE_MAGICNUM     = 0x73d392ac
 ECM_MAGICNUM            = 0x1725bcd9
 PM1_MAGICNUM            = 0x317a394b
  #### $ grep '#define.*VERSION' *.c #####
+ # Remove PRP & PM1
 FACTOR_VERSION          = 1
 LL_VERSION              = 1
-PRP_VERSION             = 4
 SPOOL_FILE_VERSION      = 1
 ECM_VERSION     = 1
-PM1_VERSION     = 2
 
 ##### END MAGIC NUMBERS             #####
 
@@ -311,7 +310,7 @@ def parse_work_unit_from_file(filename):
             wu["C"] = read_long(f)
 
         elif magic == PRP_MAGICNUM:
-            if version != PRP_VERSION:
+            if version > 7:
                 sys.exit(f"PRP({magic}) with version {version}!")
 
             wu["work_type"] = "WORK_PRP"
