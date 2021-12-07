@@ -50,6 +50,11 @@ ostensible the file format is
     u32             checksum of all following data
 """
 
+"""
+This has been tested with
+  * v29.8 build 6
+"""
+
 
 import os
 import re
@@ -84,7 +89,7 @@ BACKUP_STATUS      = "Backup %-16s | %s."
 BACKUP_NONE        = "No Backup files (*.bu) were found in %s."
 BACKUP_PARSE_ERROR = "Unable to parse (%s)."
 
-BACKUP_PTN = re.compile("[emp][0-9]+(.bu[0-9]*)?$")
+BACKUP_PTN = re.compile("[emp][0-9]+(_[0-9]+){0,2}(.bu[0-9]*)?$")
 
 
 
@@ -254,8 +259,8 @@ def parse_work_unit_from_file(filename):
                 wu["B"]       = read_uint64(f)
                 wu["C_done"]  = read_uint64(f)
 
-                read_uint64(f)  # "unused64" / C_start in source code
-                read_uint64(f)  # "unused64" / C_done in source code
+                wu["C_start_unused"] = read_uint64(f)
+                wu["C_unused"]       = read_uint64(f)  # C_done in source code, but I think this is C actually
 
                 # "Processed" is number of bits in state 0, number of primes in state 1
                 wu["processed"] = read_uint64(f)
@@ -277,11 +282,12 @@ def parse_work_unit_from_file(filename):
                         wu["B1_guess"] = 0
                 elif state == 0:  # PM1_STATE_STAGE1
                     wu["stage_guess"] = "B1"
-                    wu["B1_guess"] = wu["B_done"]
+                    wu["B1_guess"] = max(wu["B_done"], wu["processed"])
                 elif state == 1:  # PM1_STATE_STAGE2
                     # Cannot continue stage 2 from old P-1 save file (so through away that data)
-                    wu["stage_guess"] = "B1"
+                    wu["stage_guess"] = "B2"
                     wu["B1_guess"] = wu["B_done"]
+                    wu["B2_guess"] = wu["C_done"]
                 elif state == 2:  # PM1_STATE_DONE
                     wu["stage_guess"] = "DONE"
                     wu["B1_guess"] = wu["B_done"]
@@ -329,7 +335,7 @@ def parse_work_unit_from_file(filename):
     return wu
 
 
-def one_line_status(fn, wu):
+def one_line_status(fn, wu, name_pad):
     buf = ""
     # TODO should I print {k} * {b} ^ {n} - {c} ?
 
@@ -346,8 +352,11 @@ def one_line_status(fn, wu):
                 wu["pct_complete"], wu["B1_guess"])
         elif stage == "B1":
             # Stage 1 after small primes
-            buf += "P-1 | Stage 1 ({:.1%}) B1 @ {:d}".format(
-                wu["pct_complete"], wu["B1_guess"])
+            if wu["pct_complete"] == 1:
+                buf += "P-1 | B1={:d} complete".format(wu["B1_guess"])
+            else:
+                buf += "P-1 | Stage 1 ({:.1%}) B1 @ {:d}".format(
+                    wu["pct_complete"], wu["B1_guess"])
         elif stage == "B2":
             # Stage 2
             buf += "P-1 | B1={:.0f} complete, Stage 2".format(wu["B2_guess"])
@@ -380,11 +389,11 @@ def one_line_status(fn, wu):
     else:
         buf += "UNKNOWN work={}".format(work)
 
-    return fn.ljust(12) + " | " + buf
+    return fn.ljust(name_pad) + " | " + buf
 
 
 def main(dir_name = "."):
-    names = scan_directory(dir_name)
+    names = sorted(scan_directory(dir_name))
 
     parsed = {}
     failed = []
@@ -398,13 +407,14 @@ def main(dir_name = "."):
     if failed:
         print()
         print(f"FAILED ({len(failed)}):")
-        for i, name in enumerate(sorted(failed)):
+        for i, name in enumerate(failed):
             if i < 10 or (i < 100 and i % 10 == 0) or i % 100 == 0: print(f"\t{i} {name}")
         print()
 
+    longest_name = min(20, max(map(len, parsed.keys()), default=0))
     print(f"Found {len(names)} backup files in {dir_name!r}")
     for name in sorted(parsed):
-        print(one_line_status(name, parsed[name]))
+        print(one_line_status(name, parsed[name], longest_name))
 
 if __name__ == "__main__":
     directory = "." if len(sys.argv) < 2 else sys.argv[1]
