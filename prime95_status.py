@@ -198,21 +198,26 @@ def parse_work_unit_from_file(filename):
             wu["C_done"] = read_longlong(f)
 
         elif magic == PM1_MAGICNUM:
-            if version != PM1_VERSION:
+            if version in (3, 6):
+                # new 30.8 verson
+                wu["work_type"] = "WORK_PMINUS1"
+
+            elif version != PM1_VERSION:
                 sys.exit(f"P-1({magic}) with version {version}!")
 
-            wu["work_type"] = "WORK_PMINUS1"
-            wu["pm1_stage"] = read_long(f)
-            wu["B_done"]  = read_longlong(f)
-            wu["B"]       = read_longlong(f)
-            wu["C_done"]  = read_longlong(f)
-            wu["C_start"] = read_longlong(f)
-            wu["C"]       = read_longlong(f)
+            else:
+                wu["work_type"] = "WORK_PMINUS1"
+                wu["pm1_stage"] = read_long(f)
+                wu["B_done"]  = read_longlong(f)
+                wu["B"]       = read_longlong(f)
+                wu["C_done"]  = read_longlong(f)
+                wu["C_start"] = read_longlong(f)
+                wu["C"]       = read_longlong(f)
 
-            # "Processed" is number of bits in stage 0, number of primes in stage 1
-            wu["pairs_done"] = read_longlong(f)
-            wu["D"]       = read_long(f)
-            wu["E"]       = read_long(f)
+                # "Processed" is number of bits in stage 0, number of primes in stage 1
+                wu["pairs_done"] = read_longlong(f)
+                wu["D"]       = read_long(f)
+                wu["E"]       = read_long(f)
 
         elif magic == LL_MAGICNUM:
             if version != LL_VERSION:
@@ -261,29 +266,33 @@ def one_line_status(fn, wu):
         buf += "ECM | Curve {:d} | Stage {} ({:.1%})".format(
                 wu["curves_to_do"], wu["pm1_stage"] + 1, wu["pct_complete"])
     elif work == "WORK_PMINUS1":
-        stage = wu["pm1_stage"]
-        if stage == PM1_STAGE0:
-            # Stage 1, pairs_done = processed = bit_number
-            buf += "P-1 | Stage 1 ({:.1%}) B1 <{:d}".format(
-                wu["pct_complete"], wu["pairs_done"])
-        elif stage == PM1_STAGE1:
-            # Stage 1 after small primes, pairs_done = processed = prime
-            buf += "P-1 | Stage 1 ({:.1%}) B1 @ {:d}".format(
-                wu["pct_complete"], wu["pairs_done"])
-        elif stage == PM1_STAGE2:
-            # Stage 2 after small primes, pairs_done = processed = B1 bound
-            buf += "P-1 | B1={:.0f} complete, Stage 2 ({:.1%})".format(
-                   wu["B"], wu["pct_complete"]);
-        elif stage == PM1_DONE:
-            # P-1 done
-            buf += "P-1 | B1={:.0f}".format(wu["B"])
-            if wu["C"] > wu["B"]:
-                buf += " ,B2={:.0f}".format(wu["C"])
-                if wu["E"] >= 2:
-                    buf += " ,E={:d}".format(wu["E"])
-            buf += " complete"
+        if wu["version"] in (3, 6):
+            # new 30.8 verson
+            buf += " P-1 | *unhandled 30.8 data* waiting for beta "
         else:
-            buf += "UNKNOWN STAGE={:d}".format(stage)
+            stage = wu["pm1_stage"]
+            if stage == PM1_STAGE0:
+                # Stage 1, pairs_done = processed = bit_number
+                buf += "P-1 | Stage 1 ({:.1%}) B1 <{:d}".format(
+                    wu["pct_complete"], wu["pairs_done"])
+            elif stage == PM1_STAGE1:
+                # Stage 1 after small primes, pairs_done = processed = prime
+                buf += "P-1 | Stage 1 ({:.1%}) B1 @ {:d}".format(
+                    wu["pct_complete"], wu["pairs_done"])
+            elif stage == PM1_STAGE2:
+                # Stage 2 after small primes, pairs_done = processed = B1 bound
+                buf += "P-1 | B1={:.0f} complete, Stage 2 ({:.1%})".format(
+                       wu["B"], wu["pct_complete"]);
+            elif stage == PM1_DONE:
+                # P-1 done
+                buf += "P-1 | B1={:.0f}".format(wu["B"])
+                if wu["C"] > wu["B"]:
+                    buf += " ,B2={:.0f}".format(wu["C"])
+                    if wu["E"] >= 2:
+                        buf += " ,E={:d}".format(wu["E"])
+                buf += " complete"
+            else:
+                buf += "UNKNOWN STAGE={:d}".format(stage)
 
     elif work == "WORK_TEST":
         buf += "LL  | Iteration {}/{} [{:0.2%}]".format(
@@ -308,7 +317,7 @@ def main(dir_name = "."):
     parsed = {}
     failed = []
     for name in names:
-        result = parse_work_unit_from_file(name)
+        result = parse_work_unit_from_file(os.path.join(dir_name, name))
         if result is not None:
             parsed[name] = result
         else:
