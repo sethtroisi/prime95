@@ -54,6 +54,8 @@ ostensible the file format is
 This has been tested with
   * v29.8 build 6
   * v30.3 build 6
+  * v30.7 build 9
+  * v30.8 build 4 (partial)
 """
 
 
@@ -75,11 +77,10 @@ SPOOL_FILE_MAGICNUM     = 0x73d392ac
 ECM_MAGICNUM            = 0x1725bcd9
 PM1_MAGICNUM            = 0x317a394b
  #### $ grep '#define.*VERSION' *.c #####
- # Remove PRP & PM1
+ # Removed {ECM,PRP,PM1}_VERSION
 FACTOR_VERSION          = 1
 LL_VERSION              = 1
 SPOOL_FILE_VERSION      = 1
-ECM_VERSION     = 1
 
 ##### END MAGIC NUMBERS             #####
 
@@ -174,7 +175,7 @@ def read_header(f, wu):
     wu["pad"] = list(read_array(f, 1))
     wu["pct_complete"] = read_double(f)
 
-    wu["sum"] = read_long(f)
+    wu["checksum"] = read_long(f)
 
     wu["stage"][10] = 0
     wu["pct_complete"] = max(0, min(1, wu["pct_complete"]))
@@ -197,7 +198,7 @@ def parse_work_unit_from_file(filename):
         if magic == ECM_MAGICNUM:
             wu["work_type"] = "WORK_ECM"
 
-            if version == 2:    # 25 - 30.6
+            if version <= 2:    # 25 - 30.6
                 wu["state"] = read_long(f)
                 wu["curve"] = read_long(f)    # 'curves_to_go' in older code
                 wu["sigma"] = read_double(f)  # 'curve' in older code
@@ -227,10 +228,8 @@ def parse_work_unit_from_file(filename):
                 if state == 1:    # ECM_STATE_STAGE1
                     wu["stage_guess"] = 1
                     wu["stage1_prime"] = read_uint64(f)
-                    wu["pct_guess"] = wu["stage1_prime"] / wu["B"]
                 elif state == 2:  # ECM_STATE_MIDSTAGE
                     wu["stage_guess"] = 1
-                    wu["pct_complete"] = 1
                 elif state == 3:  # ECM_STATE_STAGE2
                     wu["stage_guess"] = 2
                     # A bunch of unused (by this program values)
@@ -246,15 +245,15 @@ def parse_work_unit_from_file(filename):
                     wu["pct_guess"] = f"~~{pct:.1%}"
                 elif state == 4:  # ECM_STATE_CGD
                     wu["stage_guess"] = 2
-                    wu["pct_complete"] = 0.99
 
             else:
-                sys.exit(f"ECM({magic}) with version {version}!")
+                sys.stderr.write(f"ECM with version {version} {filename!r}\n")
+                return None
 
         elif magic == PM1_MAGICNUM:
             wu["work_type"] = "WORK_PMINUS1"
 
-            if version >= 5:    # 30.4 to 30.7
+            if 5 <= version <= 7:    # 30.4 to 30.7
                 #define PM1_STATE_STAGE0	0	/* In stage 1, computing 3^exp using a precomputed mpz exp */
                 #define PM1_STATE_STAGE1	1	/* In stage 1, processing larger primes */
                 #define PM1_STATE_MIDSTAGE	2	/* Between stage 1 and stage 2 */
@@ -262,40 +261,66 @@ def parse_work_unit_from_file(filename):
                 #define PM1_STATE_GCD		4	/* Stage 2 GCD */
                 #define PM1_STATE_DONE		5	/* P-1 job complete */
 
-                # TODO manually calculate?
-                wu["pct_complete"] = 0
-
                 state = read_int(f)
                 wu["state"] = state
 
                 if state == 0:    # PM1_STATE_STAGE0
                     wu["stage_guess"] = "B1_pre"
-                    wu["B1_guess"] = read_uint64(f)
+                    wu["interim_B"] = read_uint64(f)
+                    wu["max_stage0_prime"] = read_long(f)
+                    wu["stage0_bitnum"] = read_long(f)
+
+                    if version == 7:
+                        # TODO verify this after 30.8 stable
+                        wu["stage0_bitnum"] = read_long(f)
+
+                    wu["B1_guess"] = wu["stage0_bitnum"]
+
                 elif state == 1:  # PM1_STATE_STAGE1
                     wu["stage_guess"] = "B1"
-                    wu["B_done"] = read_uint64(f)   # B_done
-                    wu["B1_guess"] = read_uint64(f)  # interim_B
+                    wu["B_done"] = read_uint64(f)
+                    wu["interim_B"] = read_uint64(f)
+                    wu["stage1_prime"] = read_uint64(f)
+
+                    # stage1_prime can be slightly larger than bound
+                    # use B_done if non-zero otherwise stage1_prime
+                    wu["B1_guess"] = wu["B_done"] or wu["stage1_prime"]
+
                 elif state == 2:  # PM1_STATE_MIDSTAGE
                     wu["stage_guess"] = "B1"
-                    wu["pct_complete"] = 1
-                    wu["B1_guess"] = read_uint64(f)  # B_done
-                    wu["B2_guess"] = read_uint64(f)  # C_done
+                    wu["B_done"] = read_uint64(f)
+                    wu["C_done"] = read_uint64(f)
+
+                    # TODO can C_done be > B_done if B2 was extended?
+                    wu["B1_guess"] = wu["B_done"]
+
                 elif state == 3:  # PM1_STATE_STAGE2
                     wu["stage_guess"] = "B2"
-                    wu["B1_guess"] = read_uint64(f)  # B_done
-                    wu["B2_guess"] = read_uint64(f)  # C_done
+                    wu["B_done"] = read_uint64(f)
+                    wu["C_done"] = read_uint64(f)
                     wu["interim_C"] = read_uint64(f)
-                    wu["pct_complete"] = wu["interim_C"] / wu["B2_guess"]
+                    wu["pct_guess"] = wu["interim_C"] / wu["C_done"]
+
+                    wu["B1_guess"] = wu["B_done"]
+                    wu["B2_guess"] = wu["C_done"]
+
                 elif state == 4:  # PM1_STATE_GCD
                     wu["stage_guess"] = "B2"
-                    wu["pct_complete"] = 0.99
-                    wu["B1_guess"] = read_uint64(f)  # B_done
-                    wu["B2_guess"] = read_uint64(f)  # C_done
+                    wu["pct_guess"] = 0.99
+                    wu["B_done"] = read_uint64(f)
+                    wu["C_done"] = read_uint64(f)
+
+                    wu["B1_guess"] = wu["B_done"]
+                    wu["B2_guess"] = wu["C_done"]
+
                 elif state == 5:  # PM1_STATE_DONE
                     wu["stage_guess"] = "DONE"
                     wu["pct_complete"] = 1
-                    wu["B1_guess"] = read_uint64(f)  # B_done
-                    wu["B2_guess"] = read_uint64(f)  # C_done
+                    wu["B_done"] = read_uint64(f)
+                    wu["C_done"] = read_uint64(f)
+
+                    wu["B1_guess"] = wu["B_done"]
+                    wu["B2_guess"] = wu["C_done"]
 
             elif version < 5:  # Version 25 through 30.3 save file
                 state = read_long(f)
@@ -348,7 +373,7 @@ def parse_work_unit_from_file(filename):
                     wu["B1_guess"] = wu["B_done"]
                     wu["B2_guess"] = wu["C_done"]
 
-            elif version != PM1_VERSION:
+            else:
                 sys.stderr.write(f"P-1 with version {version} {filename!r}\n")
                 return None
 
@@ -421,9 +446,9 @@ def one_line_status(fn, wu, name_pad):
             # Stage 2
             buf += "P-1 | B1={:.0f} complete, Stage 2".format(wu["B2_guess"])
             if wu["pct_complete"] == 0.99:
-                buf += "(99%, computing GCD)"
+                buf += " (99%, computing GCD)"
             else:
-                buf += "({:.1%})".format(wu["pct_complete"])
+                buf += " ({:.1%})".format(wu["pct_complete"])
         elif stage == "DONE":
             # P-1 done
             buf += "P-1 | B1={:.0f}".format(wu["B1_guess"])
@@ -478,6 +503,11 @@ def main(args):
 
     if args.json:
         print(f"Writing json data to {args.json!r}")
+
+        # stage clutters json so pop it
+        for wu in parsed.values():
+            wu.pop("stage", None)
+
         with open(args.json, "w") as f:
             json.dump(parsed, f, indent=4)
 
