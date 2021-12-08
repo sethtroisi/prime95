@@ -69,22 +69,23 @@ cat <<- 'EOF' > prime.txt
 EOF
 
 # Join Gimps, Use Primenet, Accept, Settings (default, default, default), exit
-echo -e "Y\nN\nY\n\n\n\n\n\n\n\n5\n" | ./mprime_test > /dev/null
+echo -e "Y\nN\nY\n\n\n\n\n\n\n\n\n\n\n\n\n5\n" | ./mprime_test > /dev/null
 
 partial_setup 4  "ECM2=1,2,14009,-1,2000000,0,5"            e0014009 "ECM, stopped at ~10% stage1"
-partial_setup 5  "ECM2=1,2,14153,-1,10000,200000000,5"      e0014153 "ECM, stopped at ~20% stage2"
-partial_setup 4  "ECM2=1,2,14243,-1,6000,3000000,100"       e0014243 "ECM, stopped in stage2, curve > 1"
+# It's hard to check this between Stage 2 init and D-block
+partial_setup 15 "ECM2=1,2,14153,-1,50000,200000000,5"      e0014153 "ECM, stopped at ~40% stage2"
+partial_setup 4  "ECM2=1,2,14243,-1,50000,3000000,100"       e0014243 "ECM, stopped in stage2, curve > 1"
 
-partial_setup 2  "Pminus1=N/A,1,2,2237,-1,200000000,0"      m0002237 "PM1, Stopping in small primes ~2%"
-partial_setup 20 "Pminus1=N/A,1,2,2267,-1,200000000,0"      m0002267 "PM1, Stopping in stage 1 ~10%"
+#partial_setup 2  "Pminus1=N/A,1,2,2237,-1,200000000,0"      m0002237 "PM1, Stopping in small primes ~2%"
+#partial_setup 20 "Pminus1=N/A,1,2,2267,-1,200000000,0"      m0002267 "PM1, Stopping in stage 1 ~10%"
 
-partial_setup 2  "Pminus1=N/A,1,2,13009,-1,10000,10000"     m0013009 "PM1, B1 only, 1e5 finished"
-partial_setup 3  "Pminus1=N/A,1,2,13121,-1,100000,90000000" m0013121 "PM1, Stopping in stage 2 ~30%"
-partial_setup 2  "Pminus1=N/A,1,2,13217,-1,100000,1000000"  m0013217 "PM1, B1=1e6, B2=10e6 finished"
+#partial_setup 2  "Pminus1=N/A,1,2,13009,-1,100000,100000"     m0013009 "PM1, B1 only, 1e5 finished"
+#partial_setup 3  "Pminus1=N/A,1,2,13121,-1,100000,90000000" m0013121 "PM1, Stopping in stage 2 ~30%"
+#partial_setup 2  "Pminus1=N/A,1,2,13217,-1,100000,1000000"  m0013217 "PM1, B1=1e5, B2=1e6 finished"
 
-partial_setup 2  "PRP=1,2,700001,-1"    p0700001       "PRP, stopped at ~3%"
-partial_setup 10 "PRP=46157,2,698207,1" p46157_698207  "PRP, Seventeen or Bust prime stopped at ~8%"
-partial_setup 3  "PRP=6,10,71299,7"     p6_71299_7     "PRP, Near Repunit prime stopped at ~30%"
+#partial_setup 2  "PRP=1,2,700001,-1"    p0700001       "PRP, stopped at ~3%"
+#partial_setup 10 "PRP=46157,2,698207,1" p46157_698207  "PRP, Seventeen or Bust prime stopped at ~8%"
+#partial_setup 3  "PRP=6,10,71299,7"     p6_71299_7     "PRP, Near Repunit prime stopped at ~30%"
 
 ls | grep -v '\.txt$'
 cd ..

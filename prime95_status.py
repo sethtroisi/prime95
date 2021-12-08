@@ -121,9 +121,6 @@ def scan_directory(dir_name):
     return names
 
 
-# Global "sum" used as checksum
-global_checksum = 0
-
 def _read_bytes(f, count):
     f_bytes = f.read(count)
     if len(f_bytes) != count:
@@ -198,18 +195,61 @@ def parse_work_unit_from_file(filename):
         version = wu["version"]
 
         if magic == ECM_MAGICNUM:
-            if version != ECM_VERSION:
-                sys.exit(f"ECM({magic}) with version {version}!")
-
             wu["work_type"] = "WORK_ECM"
-            wu["pm1_stage"] = read_long(f)
-            wu["curves_to_do"] = read_long(f)
-            # Sigma of current curve
-            wu["curve"] = read_double(f)
 
-            wu["B"] = read_uint64(f)
-            wu["B_done"] = read_uint64(f)
-            wu["C_done"] = read_uint64(f)
+            if version == 2:    # 25 - 30.6
+                wu["state"] = read_long(f)
+                wu["curve"] = read_long(f)    # 'curves_to_go' in older code
+                wu["sigma"] = read_double(f)  # 'curve' in older code
+
+                wu["B"] = read_uint64(f)
+                wu["B_done"] = read_uint64(f)
+                wu["C_done"] = read_uint64(f)
+
+                wu["stage_guess"] = wu["state"] + 1
+
+            elif version == 3:
+                wu["curve"] = read_long(f)
+                wu["average_B2"] = read_uint64(f)
+                state = read_int(f)
+                wu["state"] = state
+
+                wu["sigma"] = read_double(f)
+                wu["B"] = read_uint64(f)
+                wu["C"] = read_uint64(f)
+
+                #define ECM_STATE_STAGE1_INIT       0   /* Selecting sigma for curve */
+                #define ECM_STATE_STAGE1        1   /* In middle of stage 1 */
+                #define ECM_STATE_MIDSTAGE      2   /* Stage 2 initialization for the first time */
+                #define ECM_STATE_STAGE2        3   /* In middle of stage 2 (processing a pairmap) */
+                #define ECM_STATE_GCD           4   /* Stage 2 GCD */
+
+                if state == 1:    # ECM_STATE_STAGE1
+                    wu["stage_guess"] = 1
+                    wu["stage1_prime"] = read_uint64(f)
+                    wu["pct_guess"] = wu["stage1_prime"] / wu["B"]
+                elif state == 2:  # ECM_STATE_MIDSTAGE
+                    wu["stage_guess"] = 1
+                    wu["pct_complete"] = 1
+                elif state == 3:  # ECM_STATE_STAGE2
+                    wu["stage_guess"] = 2
+                    # A bunch of unused (by this program values)
+                    # read 6 ints (stage2_numvals, totrels, D, E, two_fft_stage2), pool_type)
+                    # read 2 uint64 (first_relocatable, last_relocatable)
+                    for i in range(6):
+                        read_int(f)
+                    for i in range(2):
+                        read_uint64(f)
+                    wu["B2_start"] = read_uint64(f)
+                    wu["C_done"] = read_uint64(f)
+                    pct = (wu["C_done"] - wu["B2_start"]) / (wu["C"] - wu["B2_start"])
+                    wu["pct_guess"] = f"~~{pct:.1%}"
+                elif state == 4:  # ECM_STATE_CGD
+                    wu["stage_guess"] = 2
+                    wu["pct_complete"] = 0.99
+
+            else:
+                sys.exit(f"ECM({magic}) with version {version}!")
 
         elif magic == PM1_MAGICNUM:
             wu["work_type"] = "WORK_PMINUS1"
@@ -358,8 +398,12 @@ def one_line_status(fn, wu, name_pad):
     work = wu["work_type"]
     if work == "WORK_ECM":
         # TODO print bounds?
-        buf += "ECM | Curve {:d} | Stage {} ({:.1%})".format(
-                wu["curves_to_do"], wu["pm1_stage"] + 1, wu["pct_complete"])
+        pct = wu.get("pct_complete", wu.get("pct_guess", ""))
+        if isinstance(pct, (int, float)):
+            pct = f"{pct:.1%}"
+        buf += "ECM | Curve {:d} | Stage {}".format(wu["curve"], wu["stage_guess"])
+        if pct:
+            buf += " (" + pct + ")"
     elif work == "WORK_PMINUS1":
         stage = wu["stage_guess"]
         if stage == "B1_pre":
